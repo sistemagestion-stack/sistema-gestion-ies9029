@@ -1,0 +1,29 @@
+<div class="modulo-container">
+  <h2>Gestión de Legajos de Docentes</h2>
+  
+  <!-- Formulario de carga de docentes -->
+  <form id="form-docente" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+    <input type="text" id="legajo-doc" placeholder="Legajo (ej: DOC-003)" required>
+    <input type="text" id="nombre-doc" placeholder="Nombre" required>
+    <input type="text" id="apellido-doc" placeholder="Apellido" required>
+    <input type="text" id="materia-doc" placeholder="Materia / Cátedra" required>
+    <input type="email" id="email-doc" placeholder="Correo electrónico">
+    <button type="submit" style="padding: 8px 16px; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer;">Guardar Docente</button>
+  </form>
+
+  <!-- Tabla de docentes -->
+  <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background: #e2e8f0;">
+        <th>Legajo</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Materia</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-docentes">
+      <!-- Se llena dinámicamente -->
+    </tbody>
+  </table>
+</div>

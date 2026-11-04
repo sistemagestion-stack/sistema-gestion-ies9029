@@ -1,0 +1,38 @@
+<div class="modulo-container">
+  <h2>Gestión de Usuarios, Permisos y Plan</h2>
+  
+  <!-- Tarjeta del Plan -->
+  <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; border-radius: 6px; margin-bottom: 25px;">
+    <h3 style="color: #0369a1; margin-bottom: 5px;">Detalles del Plan Activo</h3>
+    <p><strong>Institución:</strong> <span id="plan-institución">-</span></p>
+    <p><strong>Tipo de Plan:</strong> <span id="plan-nombre">-</span> (<span id="plan-estado" style="color: green; font-weight: bold;">-</span>)</p>
+    <p><strong>Capacidad de Legajos:</strong> <span id="plan-uso">-</span></p>
+  </div>
+
+  <h3>Administración de Usuarios y Roles</h3>
+  <form id="form-usuario" style="margin: 15px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+    <input type="text" id="user-name" placeholder="Nombre de Usuario (ej: jperez)" required>
+    <input type="text" id="nombre-completo" placeholder="Nombre Completo" required>
+    <select id="rol-user" required>
+      <option value="Administrador">Administrador</option>
+      <option value="Secretaría">Secretaría</option>
+      <option value="Coordinador de Sede">Coordinador de Sede</option>
+    </select>
+    <input type="email" id="email-user" placeholder="Correo electrónico">
+    <button type="submit" style="padding: 8px 16px; background: #0f172a; color: white; border: none; border-radius: 4px; cursor: pointer;">Crear Usuario</button>
+  </form>
+
+  <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background: #e2e8f0;">
+        <th>Usuario</th>
+        <th>Nombre Completo</th>
+        <th>Rol / Permiso</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-usuarios">
+      <!-- Carga dinámica -->
+    </tbody>
+  </table>
+</div>

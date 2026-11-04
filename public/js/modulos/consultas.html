@@ -1,0 +1,370 @@
+<div class="space-y-6 w-full max-w-full overflow-hidden">
+  
+  <!-- TARJETA CABECERA PRINCIPAL BLOQUEADA CONTRA DESBORDAMIENTOS -->
+  <div class="theme-card border p-5 rounded-2xl flex flex-col space-y-4 shadow-lg w-full max-w-full overflow-hidden">
+    
+    <!-- FILA SUPERIOR: TÍTULO, DESPLEGABLE ANCHO DE CARRERA Y DESCARGAS -->
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 w-full overflow-hidden">
+      
+      <!-- DETALLES Y TÍTULO DE CARRERA CON TRUNCATE CONTROLADO -->
+      <div class="space-y-1 min-w-0 max-w-full flex-1">
+        <h2 class="text-base font-black text-white flex items-center gap-2">
+          Cronograma de Consultas
+        </h2>
+        <p id="subtitulo-carrera-consultas" class="text-xs text-slate-400 line-clamp-2 truncate max-w-full">
+          Gestión de Mesas y Horarios de Orientación Académica
+        </p>
+      </div>
+
+      <!-- BLOQUE ANCHO SELECCIÓN + ACCIONES EXPORTAR -->
+      <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-start lg:justify-end shrink-0">
+        
+        <!-- DESPLEGABLE DE CARRERAS AMPLIADO -->
+        <div class="flex items-center gap-2 bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 shadow-inner w-full sm:w-auto max-w-full">
+          <i data-lucide="book-open" class="w-4 h-4 text-amber-400 shrink-0"></i>
+          <select id="select-carrera-consultas" onchange="cambiarCarreraConsultas(this.value)" class="bg-transparent text-xs text-white font-black outline-none cursor-pointer max-w-[280px] md:max-w-[380px] truncate">
+            <option value="">Cargando carreras...</option>
+          </select>
+        </div>
+
+        <!-- BOTONES DESCARGA FIJOS -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="descargarConsultasPDF()" class="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer whitespace-nowrap">
+            <i data-lucide="file-down" class="w-4 h-4"></i> Descargar PDF
+          </button>
+
+          <button onclick="descargarConsultasJPG()" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer whitespace-nowrap">
+            <i data-lucide="image" class="w-4 h-4"></i> Guardar JPG
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA INFERIOR DE CONFIGURACIÓN CON AGREGAR MATERIA Y ESCOBA AL LADO -->
+    <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs w-full">
+      
+      <div class="flex items-center gap-2 flex-wrap max-w-full">
+        <!-- TURNO -->
+        <div class="flex items-center gap-1.5 bg-slate-950/60 border border-slate-800 px-2.5 py-1.5 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-slate-400">Turno:</span>
+          <select id="cfg-turno" onchange="renderizarPDFConsultas()" class="bg-transparent text-amber-400 font-bold outline-none cursor-pointer">
+            <option value="ORDINARIO" selected>Ordinario</option>
+            <option value="EXTRAORDINARIO">Extraordinario</option>
+            <option value="ESPECIAL">Especial</option>
+          </select>
+        </div>
+
+        <!-- MES -->
+        <div class="flex items-center gap-1.5 bg-slate-950/60 border border-slate-800 px-2.5 py-1.5 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-slate-400">Mes:</span>
+          <select id="cfg-mes" onchange="renderizarPDFConsultas()" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio">Junio</option>
+            <option value="Julio" selected>Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+        </div>
+
+        <!-- AÑO -->
+        <div class="flex items-center gap-1.5 bg-slate-950/60 border border-slate-800 px-2.5 py-1.5 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-slate-400">Año:</span>
+          <select id="cfg-ano" onchange="renderizarPDFConsultas()" class="bg-transparent text-white font-bold outline-none cursor-pointer">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            <option value="2034">2034</option>
+            <option value="2035">2035</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- BOTONES AGREGAR MATERIA Y LIMPIAR JUNTOS A LA DERECHA -->
+      <div class="flex items-center gap-2 shrink-0">
+        <!-- BOTÓN AGREGAR MATERIA -->
+        <button onclick="abrirModalAgregarMateria()" class="bg-emerald-600/90 hover:bg-emerald-500 text-white border border-emerald-500/50 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+          <span>Agregar Materia</span>
+        </button>
+
+        <!-- BOTÓN LIMPIAR ESCOBA -->
+        <button onclick="limpiarConsultasGlobales()" class="bg-slate-800 hover:bg-rose-900/40 text-rose-300 border border-slate-700 hover:border-rose-600 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Limpiar Consultas</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- TABLA PRINCIPAL DE MATERIAS -->
+  <div class="theme-card border rounded-2xl overflow-hidden shadow-xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead>
+          <tr class="border-b border-slate-700/50 bg-slate-800/60 text-slate-300 uppercase font-bold text-[10px] tracking-wider">
+            
+            <th class="p-3">
+              <div class="space-y-1.5">
+                <span>Materia / Espacio Curricular</span>
+                <input type="text" id="filtro-materia" onkeyup="filtrarColumnaConsultas()" placeholder="Buscar materia..." class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-2 py-1 text-[11px] font-normal text-slate-200 outline-none focus:border-amber-500">
+              </div>
+            </th>
+
+            <th class="p-3">
+              <div class="space-y-1.5">
+                <span>Docente</span>
+                <input type="text" id="filtro-profe" onkeyup="filtrarColumnaConsultas()" placeholder="Buscar docente..." class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-2 py-1 text-[11px] font-normal text-slate-200 outline-none focus:border-amber-500">
+              </div>
+            </th>
+
+            <th class="p-3 text-center w-24">
+              <div class="space-y-1.5">
+                <span>Año</span>
+                <select id="filtro-ano" onchange="filtrarColumnaConsultas()" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-1 py-1 text-[11px] font-normal text-slate-200 outline-none focus:border-amber-500">
+                  <option value="">Todos</option>
+                  <option value="1">1° Año</option>
+                  <option value="2">2° Año</option>
+                  <option value="3">3° Año</option>
+                </select>
+              </div>
+            </th>
+
+            <th class="p-3 text-center w-44">
+              <div class="space-y-1.5">
+                <span>Fecha y Hora</span>
+                <select id="filtro-estado" onchange="filtrarColumnaConsultas()" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-lg px-1 py-1 text-[11px] font-normal text-slate-200 outline-none focus:border-amber-500">
+                  <option value="">Todos</option>
+                  <option value="completo">Completos</option>
+                  <option value="falta">Solo "FALTA"</option>
+                </select>
+              </div>
+            </th>
+
+            <th class="p-3 text-center w-24">
+              <div class="h-full flex items-end justify-center pb-1">
+                <span class="text-[9px] text-slate-400 uppercase font-semibold">Acciones</span>
+              </div>
+            </th>
+
+          </tr>
+        </thead>
+        <tbody id="tabla-consultas-lista" class="divide-y divide-slate-800/40">
+          <!-- Carga dinámica -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR CONSULTA CON CALENDARIO Y SELECTOR DE HORA COMPLETO -->
+  <div id="modalEditarConsulta" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#0f172a] border border-slate-800 text-slate-100 max-w-lg w-full p-6 rounded-3xl shadow-2xl space-y-4 relative">
+      
+      <!-- CABECERA DE LA MODAL -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-black flex items-center gap-2 text-amber-400">
+          <i data-lucide="clock" class="w-4 h-4"></i> Asignar Consulta Académica
+        </h3>
+        <button onclick="cerrarModalEditarConsulta()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="formEditarConsulta" onsubmit="guardarEdicionConsulta(event)" class="space-y-4 text-xs">
+        <input type="hidden" id="edit-mat-db-id">
+
+        <!-- ESPACIO CURRICULAR -->
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Espacio Curricular</label>
+          <input type="text" id="edit-materia" disabled class="w-full bg-[#090d16] border border-slate-800/80 rounded-2xl p-2.5 text-xs text-slate-300 font-bold cursor-not-allowed">
+        </div>
+
+        <!-- DOCENTE -->
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Docente a Cargo</label>
+          <input type="text" id="edit-profe" placeholder="Nombre del docente..." class="w-full bg-[#182235] border border-slate-700/60 rounded-2xl p-2.5 text-xs text-white outline-none focus:border-amber-400 font-medium transition-all">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          
+          <!-- CALENDARIO VISUAL ELEGANTE -->
+          <div class="bg-[#182235]/70 border border-slate-700/60 rounded-2xl p-3 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-700/50 pb-1.5">
+              <button type="button" onclick="navegarMesCalendario(-1)" class="p-1 text-slate-400 hover:text-amber-400 transition-colors">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <span id="cal-mes-ano-lbl" class="text-[11px] font-black uppercase text-amber-400 tracking-wider">MARZO 2026</span>
+              <button type="button" onclick="navegarMesCalendario(1)" class="p-1 text-slate-400 hover:text-amber-400 transition-colors">
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- DÍAS CABECERA -->
+            <div class="grid grid-cols-7 gap-1 text-center font-bold text-[9px] text-slate-400 uppercase">
+              <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+            </div>
+
+            <!-- GRILLA DÍAS DEL MES -->
+            <div id="cal-grilla-dias" class="grid grid-cols-7 gap-1 text-center text-[11px]">
+              <!-- Días inyectados dinámicamente -->
+            </div>
+          </div>
+
+          <!-- SELECTOR DE HORA Y MINUTOS DEL 00 AL 59 -->
+          <div class="bg-[#182235]/70 border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="block text-[10px] font-bold uppercase text-slate-400 mb-2">Hora de Consulta</span>
+              <div class="grid grid-cols-2 gap-2">
+                <!-- HORA -->
+                <div>
+                  <span class="block text-[8px] text-slate-400 uppercase font-bold mb-1 text-center">Hora</span>
+                  <select id="pick-hora-num" onchange="actualizarPrevisualizacionHora()" class="w-full bg-[#090d16] border border-slate-700/80 rounded-xl p-2 text-center text-xs font-black text-amber-400 outline-none focus:border-amber-400 max-h-36 overflow-y-auto">
+                    <option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option>
+                    <option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option>
+                    <option value="16">16</option><option value="17">17</option><option value="18" selected>18</option><option value="19">19</option>
+                    <option value="20">20</option><option value="21">21</option><option value="22">22</option>
+                  </select>
+                </div>
+
+                <!-- MINUTOS (00 AL 59 DINÁMICO) -->
+                <div>
+                  <span class="block text-[8px] text-slate-400 uppercase font-bold mb-1 text-center">Minutos (00 - 59)</span>
+                  <select id="pick-min-num" onchange="actualizarPrevisualizacionHora()" class="w-full bg-[#090d16] border border-slate-700/80 rounded-xl p-2 text-center text-xs font-black text-white outline-none focus:border-amber-400 max-h-36 overflow-y-auto">
+                    <!-- Se llena dinámicamente del 00 al 59 -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- PREVISUALIZACIÓN SELECCIONADA -->
+            <div class="bg-[#090d16] border border-slate-800 rounded-xl p-2.5 text-center">
+              <span class="block text-[8px] uppercase font-bold text-slate-400">Selección Actual:</span>
+              <span id="preview-seleccion-final" class="text-xs font-black text-amber-400">Selecciona fecha y hora</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="cerrarModalEditarConsulta()" class="px-5 py-2.5 bg-[#182235] hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-md transition-all cursor-pointer">Guardar Consulta</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- MODAL AGREGAR MATERIA DESDE EL PLAN DE LA CARRERA -->
+  <div id="modalAgregarMateria" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#0f172a] border border-slate-800 text-slate-100 max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4 relative">
+      
+      <!-- CABECERA DE LA MODAL -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-black flex items-center gap-2 text-emerald-400">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Agregar Espacio Curricular
+        </h3>
+        <button onclick="cerrarModalAgregarMateria()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form onsubmit="confirmarAgregarMateria(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Seleccionar de la Carrera</label>
+          <select id="select-materia-plan-carrera" class="w-full bg-[#182235] border border-slate-700/80 rounded-2xl p-3 text-xs text-white font-bold outline-none focus:border-emerald-400 cursor-pointer">
+            <option value="">Cargando materias...</option>
+          </select>
+          <p class="text-[10px] text-slate-400 mt-1.5 leading-relaxed">
+            Muestra las materias configuradas en la carrera actual que aún no están asignadas.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Año de Cursado</label>
+          <select id="add-ano-cursado" class="w-full bg-[#182235] border border-slate-700/80 rounded-2xl p-3 text-xs text-white font-bold outline-none focus:border-emerald-400 cursor-pointer">
+            <option value="1">1° Año</option>
+            <option value="2">2° Año</option>
+            <option value="3">3° Año</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Docente Inicial (Opcional)</label>
+          <input type="text" id="add-profe-inicial" placeholder="Nombre del docente (opcional)..." class="w-full bg-[#182235] border border-slate-700/80 rounded-2xl p-3 text-xs text-white outline-none focus:border-emerald-400 font-medium">
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="cerrarModalAgregarMateria()" class="px-5 py-2.5 bg-[#182235] hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-xl text-xs font-black shadow-md transition-all cursor-pointer">Agregar Espacio</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- PLANTILLA A4 ULTRA NÍTIDA PARA EXPORTAR -->
+  <div class="hidden">
+    <div id="pdf-consultas-content" class="w-[210mm] min-h-[296mm] bg-white text-slate-800 p-[8mm_10mm] relative border border-slate-200 flex flex-col justify-between overflow-hidden" style="font-family: 'Inter', 'Segoe UI', sans-serif;">
+      
+      <div id="pdf-banda-color-tema" class="absolute top-0 left-0 w-2 h-full bg-emerald-600"></div>
+
+      <div class="relative z-10">
+        <header class="flex items-center justify-between gap-4 pb-3 border-b-2 border-slate-200 mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex flex-col items-center justify-center border-2 border-amber-400 shrink-0 shadow-sm">
+              <span class="text-[8px] font-bold text-amber-400 leading-none">I.E.S.</span>
+              <span class="text-[10px] font-black leading-tight">N° 9-029</span>
+            </div>
+
+            <div>
+              <span class="text-[8.5px] font-black uppercase text-slate-500 tracking-wider block leading-none mb-1">Instituto de Educación Superior N° 9-029</span>
+              <h1 id="pdf-nombre-carrera" class="text-xs font-black text-slate-900 uppercase leading-tight">CARRERA</h1>
+              <p id="pdf-subtitulo-periodo" class="text-[9.5px] text-slate-600 font-bold leading-none mt-0.5">PLAN DE ESTUDIOS — HORARIOS DE CONSULTA</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 p-1.5 rounded-2xl shrink-0">
+            <div class="text-right px-1">
+              <span id="pdf-lbl-turno" class="text-[8px] uppercase font-bold text-slate-400 block leading-none">TURNO ORDINARIO</span>
+              <span id="pdf-lbl-mes-ano" class="text-xs font-black text-slate-900 leading-tight">JULIO 2026</span>
+            </div>
+
+            <div id="pdf-contenedor-logo-carrera" class="w-11 h-11 rounded-xl bg-white p-1 border border-slate-300 shrink-0 flex items-center justify-center overflow-hidden shadow-2xs">
+              <!-- Render Carga Dinámica -->
+            </div>
+          </div>
+        </header>
+
+        <div id="cards-consultas-container" class="space-y-3">
+          <!-- Carga dinámicamente -->
+        </div>
+      </div>
+
+      <footer class="pt-2 border-t border-slate-200 flex items-center justify-between text-[8px] text-slate-400 font-semibold">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Documento Oficial de Bedelía • I.E.S. N° 9-029</span>
+        </div>
+        <span class="italic">Generación Digital • Tipografía HD A4</span>
+      </footer>
+
+    </div>
+  </div>
+
+</div>

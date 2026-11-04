@@ -1,0 +1,361 @@
+<div class="space-y-6">
+  
+  <!-- CABECERA DEL MÓDULO CON BOTONES PRINCIPALES -->
+  <div class="theme-card border p-5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg">
+    <div>
+      <h2 class="text-base font-black flex items-center gap-2">
+        Gestión de Oferta Académica / Carreras
+        <span id="badge-total-carreras" class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">0 Carreras</span>
+      </h2>
+      <p class="text-xs text-slate-400 mt-0.5">Persistencia SQLite en tiempo real • I.E.S. N° 9-029</p>
+    </div>
+
+    <div class="flex items-center gap-2 flex-wrap">
+      <label class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition-all cursor-pointer">
+        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+        <span>Importar Excel / CSV</span>
+        <input type="file" id="inputExcelCarreras" accept=".xlsx, .xls, .csv" onchange="seleccionarYPrevisualizarExcel(event)" class="hidden">
+      </label>
+
+      <button onclick="abrirModalNuevaCarrera()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold px-3.5 py-2.5 rounded-xl flex items-center gap-2 transition-all cursor-pointer">
+        <i data-lucide="plus" class="w-4 h-4"></i> Nueva Carrera
+      </button>
+    </div>
+  </div>
+
+  <!-- GRILLA DE CARRERAS -->
+  <div id="grilla-carreras" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Carga dinámica -->
+  </div>
+
+  <!-- MODAL VISTA PREVIA IMPORTACIÓN -->
+  <div id="modalVistaPreviaImport" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-5xl w-full p-6 rounded-3xl shadow-2xl space-y-4 relative max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
+        <div>
+          <h3 class="text-sm font-black text-emerald-400 flex items-center gap-2">
+            <i data-lucide="eye" class="w-4 h-4"></i> Vista Previa de Importación
+          </h3>
+          <p class="text-[11px] text-slate-400">Verifica las filas leídas antes de confirmar la carga en la base de datos.</p>
+        </div>
+        <button onclick="cerrarModalVistaPrevia()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-xs flex justify-between items-center shrink-0">
+        <span id="preview-resumen-cant" class="font-bold text-amber-400">0 registros detectados</span>
+        <span class="text-[11px] text-slate-400">Archivo listo para procesar</span>
+      </div>
+
+      <div class="overflow-y-auto flex-1 border border-slate-800 rounded-2xl">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 bg-slate-950 text-slate-300 uppercase font-bold text-[10px] tracking-wider sticky top-0 z-10">
+              <th class="p-3">Sede</th>
+              <th class="p-3">Carrera</th>
+              <th class="p-3">Unidad Curricular</th>
+              <th class="p-3 text-center min-w-[90px]">Año</th>
+              <th class="p-3 text-center">Hs Cát</th>
+              <th class="p-3 text-center">Hs Reloj</th>
+              <th class="p-3 text-center">Régimen</th>
+              <th class="p-3 text-center">Formato</th>
+              <th class="p-3 text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-preview-import" class="divide-y divide-slate-800/60">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 shrink-0">
+        <button type="button" onclick="cerrarModalVistaPrevia()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+        <button type="button" onclick="confirmarImportacionDesdePreview()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-lg cursor-pointer flex items-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i> Confirmar e Importar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CREAR / EDITAR CARRERA -->
+  <div id="modalFormCarrera" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4 relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 id="modal-carrera-titulo" class="text-sm font-black flex items-center gap-2 text-emerald-400">
+          <i data-lucide="book-open" class="w-4 h-4"></i> Registrar Carrera
+        </h3>
+        <button onclick="cerrarModalFormCarrera()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="formCarrera" onsubmit="guardarCarreraForm(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="edit-carrera-id">
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Código / Sigla</label>
+          <input type="text" id="car-codigo" required placeholder="Ej: TSGRH" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-medium">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Nombre Completo de la Carrera</label>
+          <input type="text" id="car-nombre" required placeholder="Ej: Tecnicatura Superior en Gestión de Recursos Humanos" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-medium">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Resolución / Plan de Estudio</label>
+          <input type="text" id="car-resolucion" placeholder="Ej: 3316-DGE-2018" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-medium">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">URL del Logo (Link Imagen HTTPS)</label>
+          <input type="url" id="car-logo" placeholder="https://drive.google.com/..." class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Duración (Años)</label>
+            <input type="number" id="car-duracion" value="3" min="1" max="6" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-medium">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Color (Hexadecimal)</label>
+            <div class="flex gap-2 items-center">
+              <input type="color" id="car-color-picker" value="#059669" onchange="document.getElementById('car-color-hex').value = this.value" class="w-9 h-9 bg-slate-800 border border-slate-700/80 rounded-xl p-1 cursor-pointer shrink-0">
+              <input type="text" id="car-color-hex" value="#059669" placeholder="#059669" onchange="document.getElementById('car-color-picker').value = this.value" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white font-mono uppercase outline-none focus:border-emerald-500">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="cerrarModalFormCarrera()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-md transition-all cursor-pointer">Guardar Carrera</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL PLAN DE ESTUDIOS -->
+  <div id="modalPlanEstudios" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-6xl w-full p-6 rounded-3xl shadow-2xl space-y-4 relative max-h-[92vh] flex flex-col">
+      
+      <!-- CABECERA -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-800 pb-3 gap-3 shrink-0">
+        <div>
+          <h3 id="plan-carrera-titulo" class="text-sm font-black text-amber-400">Plan de Estudios</h3>
+          <p id="plan-carrera-sub" class="text-[11px] text-slate-400">Unidades Curriculares, Carga Horaria y Formato Académico</p>
+        </div>
+        <button onclick="cerrarModalPlanEstudios()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- FORMULARIO DE ALTA -->
+      <form id="formAgregarEspacioPlan" onsubmit="guardarNuevoEspacioMateria(event)" class="bg-slate-950/50 border border-slate-800 p-3 rounded-2xl space-y-2 shrink-0">
+        <span class="block text-[10px] font-bold uppercase text-amber-400 tracking-wider">Agregar Nuevo Espacio Curricular</span>
+        <div class="grid grid-cols-1 sm:grid-cols-8 gap-2 text-xs">
+          <input type="hidden" id="plan-carrera-id-actual">
+          <input type="text" id="espacio-nombre" required placeholder="Ej: (001) - ALFABETIZACIÓN ACADÉMICA" class="sm:col-span-2 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5 text-white outline-none focus:border-amber-500 font-medium">
+          
+          <select id="espacio-ano" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500">
+            <option value="1">1° Año</option>
+            <option value="2">2° Año</option>
+            <option value="3">3° Año</option>
+          </select>
+          
+          <input type="text" id="espacio-hsc" placeholder="Hs Cát" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500 text-center">
+          <input type="text" id="espacio-hsg" placeholder="Hs Reloj" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500 text-center">
+          
+          <select id="espacio-regimen" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500">
+            <option value="1º CUAT">1º Cuat</option>
+            <option value="2º CUAT">2º Cuat</option>
+            <option value="ANUAL">Anual</option>
+          </select>
+
+          <select id="espacio-formato" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500">
+            <option value="MÓDULO">Módulo</option>
+            <option value="ASIGNATURA">Asignatura</option>
+            <option value="TALLER">Taller</option>
+            <option value="SEMINARIO">Seminario</option>
+            <option value="PRÁCTICA PROFESIONALIZANTE">Práctica Prof.</option>
+          </select>
+
+          <select id="espacio-sede" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1.5 text-white outline-none focus:border-amber-500 font-bold">
+            <option value="T029">T029</option>
+            <option value="T029/1">T029/1</option>
+            <option value="T029/2">T029/2</option>
+          </select>
+        </div>
+        
+        <div class="flex justify-end pt-1">
+          <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-md transition-all cursor-pointer">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Agregar Espacio
+          </button>
+        </div>
+      </form>
+
+      <!-- BARRA DE FILTROS DESPLEGABLES -->
+      <div class="bg-slate-950/70 border border-slate-800 p-2.5 rounded-2xl flex flex-wrap items-center gap-2 text-xs shrink-0">
+        <div class="flex items-center gap-1 text-slate-400 font-bold text-[11px] mr-1">
+          <i data-lucide="filter" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Filtros:</span>
+        </div>
+
+        <input type="text" id="filtro-mat-texto" oninput="aplicarFiltrosMateriasTabla()" placeholder="Buscar materia..." class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-white text-xs outline-none focus:border-amber-500 font-medium flex-1 min-w-[130px]">
+
+        <select id="filtro-mat-ano" onchange="aplicarFiltrosMateriasTabla()" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1 text-white text-xs outline-none focus:border-amber-500 font-medium">
+          <option value="">Todos los Años</option>
+          <option value="1">1° Año</option>
+          <option value="2">2° Año</option>
+          <option value="3">3° Año</option>
+        </select>
+
+        <select id="filtro-mat-regimen" onchange="aplicarFiltrosMateriasTabla()" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1 text-white text-xs outline-none focus:border-amber-500 font-medium">
+          <option value="">Todos los Regímenes</option>
+          <option value="1º CUAT">1º Cuatrimestre</option>
+          <option value="2º CUAT">2º Cuatrimestre</option>
+          <option value="ANUAL">Anual</option>
+        </select>
+
+        <select id="filtro-mat-formato" onchange="aplicarFiltrosMateriasTabla()" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1 text-white text-xs outline-none focus:border-amber-500 font-medium">
+          <option value="">Todos los Formatos</option>
+          <option value="MÓDULO">Módulo</option>
+          <option value="ASIGNATURA">Asignatura</option>
+          <option value="TALLER">Taller</option>
+          <option value="SEMINARIO">Seminario</option>
+          <option value="PRÁCTICA PROFESIONALIZANTE">Práctica Prof.</option>
+        </select>
+
+        <select id="filtro-mat-sede" onchange="aplicarFiltrosMateriasTabla()" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1 text-white text-xs outline-none focus:border-amber-500 font-medium">
+          <option value="">Todas las Sedes</option>
+          <option value="T029">T029</option>
+          <option value="T029/1">T029/1</option>
+          <option value="T029/2">T029/2</option>
+        </select>
+
+        <select id="filtro-mat-estado" onchange="aplicarFiltrosMateriasTabla()" class="bg-slate-900 border border-slate-700 rounded-xl px-2 py-1 text-white text-xs outline-none focus:border-amber-500 font-bold text-amber-300">
+          <option value="">Todos los Estados</option>
+          <option value="VIGENTE">VIGENTE</option>
+          <option value="EN CIERRE">EN CIERRE</option>
+          <option value="NO VIGENTE">NO VIGENTE</option>
+        </select>
+
+        <button onclick="limpiarFiltrosTablaMaterias()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-[11px] font-bold transition-all cursor-pointer">
+          Limpiar
+        </button>
+      </div>
+
+      <!-- TABLA DETALLADA DE MATERIAS -->
+      <div class="overflow-y-auto flex-1 border border-slate-800 rounded-2xl">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 bg-slate-950 text-slate-300 uppercase font-bold text-[10px] tracking-wider sticky top-0 z-10">
+              <th class="p-3">Unidad Curricular / Denominación</th>
+              <th class="p-3 text-center min-w-[100px]">Año</th>
+              <th class="p-3 text-center">Hs Cát</th>
+              <th class="p-3 text-center">Hs Reloj</th>
+              <th class="p-3 text-center">Régimen</th>
+              <th class="p-3 text-center">Formato</th>
+              <th class="p-3 text-center">Sede</th>
+              <th class="p-3 text-center">Estado</th>
+              <th class="p-3 text-center">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-plan-materias" class="divide-y divide-slate-800/60">
+            <!-- Carga dinámica -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR ESPACIO CURRICULAR / MATERIA -->
+  <div id="modalEditarMateria" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-md w-full p-6 rounded-3xl shadow-2xl space-y-4 relative">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-black text-amber-400 flex items-center gap-2">
+          <i data-lucide="pencil" class="w-4 h-4"></i> Editar Espacio Curricular
+        </h3>
+        <button onclick="cerrarModalEditarMateria()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="formEditarMateriaModal" onsubmit="guardarEdicionMateria(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="edit-mat-id">
+        <input type="hidden" id="edit-mat-carrera-id">
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Nombre / Denominación</label>
+          <input type="text" id="edit-mat-nombre" required class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-500 font-medium">
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Año</label>
+            <select id="edit-mat-ano" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 font-medium">
+              <option value="1">1° Año</option>
+              <option value="2">2° Año</option>
+              <option value="3">3° Año</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Hs Cát</label>
+            <input type="text" id="edit-mat-hsc" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 text-center font-medium">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Hs Reloj</label>
+            <input type="text" id="edit-mat-hsg" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 text-center font-medium">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Régimen</label>
+            <select id="edit-mat-regimen" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 font-medium">
+              <option value="1º CUAT">1º Cuatrimestre</option>
+              <option value="2º CUAT">2º Cuatrimestre</option>
+              <option value="ANUAL">Anual</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Formato</label>
+            <select id="edit-mat-formato" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 font-medium">
+              <option value="MÓDULO">Módulo</option>
+              <option value="ASIGNATURA">Asignatura</option>
+              <option value="TALLER">Taller</option>
+              <option value="SEMINARIO">Seminario</option>
+              <option value="PRÁCTICA PROFESIONALIZANTE">Práctica Prof.</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Sede</label>
+            <select id="edit-mat-sede" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 font-bold">
+              <option value="T029">T029</option>
+              <option value="T029/1">T029/1</option>
+              <option value="T029/2">T029/2</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-300 mb-1">Estado de Vigencia</label>
+            <select id="edit-mat-estado" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-xl p-2 text-xs text-white outline-none focus:border-amber-500 font-bold">
+              <option value="VIGENTE">VIGENTE</option>
+              <option value="EN CIERRE">EN CIERRE</option>
+              <option value="NO VIGENTE">NO VIGENTE</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="cerrarModalEditarMateria()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black shadow-md cursor-pointer">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

@@ -1,4 +1,5 @@
-async function cargarModulo(nombreModulo) {
+// CARGAR MÓDULOS CON SOPORTE PARA HISTORIAL NATIVO Y HASH DE NAVEGACIÓN
+async function cargarModulo(nombreModulo, pushToHistory = true) {
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
 
@@ -43,12 +44,17 @@ async function cargarModulo(nombreModulo) {
       if (window.lucide) lucide.createIcons();
     }
 
+    // 3. REGISTRAR RUTA EN EL HISTORIAL DEL NAVEGADOR
+    if (pushToHistory) {
+      history.pushState({ modulo: nombreModulo }, '', `#${nombreModulo}`);
+    }
+
   } catch (error) {
     contenedor.innerHTML = `<p class="text-rose-500 font-bold p-4">Error al cargar el módulo ${nombreModulo}</p>`;
   }
 }
 
-function cargarInicio() {
+function cargarInicio(pushToHistory = true) {
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
   titulo.textContent = 'INICIO GENERAL';
@@ -94,6 +100,38 @@ function cargarInicio() {
     </div>
   `;
   if (window.lucide) lucide.createIcons();
+
+  if (pushToHistory) {
+    history.pushState({ modulo: 'inicio' }, '', '#inicio');
+  }
+}
+
+// ESCUCHAR BOTÓN DE VOLVER / ATRÁS DEL NAVEGADOR
+window.addEventListener('popstate', (event) => {
+  if (event.state && event.state.modulo) {
+    if (event.state.modulo === 'inicio') {
+      cargarInicio(false);
+    } else {
+      cargarModulo(event.state.modulo, false);
+    }
+  } else {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== 'inicio') {
+      cargarModulo(hash, false);
+    } else {
+      cargarInicio(false);
+    }
+  }
+});
+
+// INICIALIZACIÓN INTELIGENTE DE RUTA AL RECARGAR PÁGINA
+function inicializarRutaHash() {
+  const hash = window.location.hash.replace('#', '');
+  if (hash && hash !== 'inicio') {
+    cargarModulo(hash, false);
+  } else {
+    cargarInicio(false);
+  }
 }
 
 function cerrarSesion() {

@@ -37,14 +37,16 @@
     body.theme-dark .subnav-btn { color: #94a3b8; }
     body.theme-dark .subnav-btn:hover { background-color: #1e293b; color: #38bdf8; }
 
-    /* ESTILOS PARA COLAPSO A SOLO ÍCONOS */
-    aside.sidebar-collapsed { width: 5rem !important; }
-    aside.sidebar-collapsed .sidebar-text,
-    aside.sidebar-collapsed .menu-arrow,
-    aside.sidebar-collapsed .submenu-container,
-    aside.sidebar-collapsed .profile-info { display: none !important; }
-    aside.sidebar-collapsed .nav-btn { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
-    aside.sidebar-collapsed .header-container { justify-content: center !important; padding: 1rem 0 !important; }
+    /* ESTILOS DE DESKTOP Y COLAPSO */
+    @media (min-width: 1024px) {
+      aside.sidebar-collapsed { width: 5rem !important; }
+      aside.sidebar-collapsed .sidebar-text,
+      aside.sidebar-collapsed .menu-arrow,
+      aside.sidebar-collapsed .submenu-container,
+      aside.sidebar-collapsed .profile-info { display: none !important; }
+      aside.sidebar-collapsed .nav-btn { justify-content: center !important; padding-left: 0 !important; padding-right: 0 !important; }
+      aside.sidebar-collapsed .header-container { justify-content: center !important; padding: 1rem 0 !important; }
+    }
 
     .dashboard-panel { animation: fadeIn 0.25s ease-in-out; }
     @keyframes fadeIn {
@@ -53,15 +55,18 @@
     }
   </style>
 </head>
-<body id="mainBody" class="h-screen w-screen flex overflow-hidden theme-dark">
+<body id="mainBody" class="h-screen w-screen flex overflow-hidden theme-dark relative">
 
-  <!-- MODAL LOGIN -->
+  <!-- OVERLAY PARA MÓVIL AL ABRIR EL SIDEBAR -->
+  <div id="mobileOverlay" onclick="toggleSidebarMobile()" class="hidden fixed inset-0 bg-slate-950/70 z-30 lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+  <!-- MODAL LOGIN RESPONSIVE -->
   <div id="modalDesktopLogin" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-sm w-full p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden">
+    <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-sm w-full p-6 sm:p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden">
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
       
-      <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-14 mx-auto mb-4 bg-white p-2 rounded-xl shadow-md object-contain" alt="Logo IES 9-029">
-      <h2 class="text-lg font-black tracking-tight text-white">I.E.S. N° 9-029</h2>
+      <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-12 sm:h-14 mx-auto mb-4 bg-white p-2 rounded-xl shadow-md object-contain" alt="Logo IES 9-029">
+      <h2 class="text-base sm:text-lg font-black tracking-tight text-white">I.E.S. N° 9-029</h2>
       <p class="text-xs text-slate-400 mb-6">Sistema Integrado de Gestión Administrativa</p>
 
       <div class="space-y-4 text-left">
@@ -81,8 +86,8 @@
     </div>
   </div>
 
-  <!-- SIDEBAR LATERAL CON ACORDEÓN -->
-  <aside id="sidebarNav" class="w-64 flex flex-col justify-between shrink-0 border-r transition-all duration-300 relative z-20">
+  <!-- SIDEBAR LATERAL ADAPTATIVO -->
+  <aside id="sidebarNav" class="fixed lg:static inset-y-0 left-0 z-40 w-64 -translate-x-full lg:translate-x-0 flex flex-col justify-between shrink-0 border-r transition-transform duration-300 ease-in-out">
     <div class="overflow-y-auto">
       <div class="header-container p-4 border-b border-slate-800/50 flex items-center justify-between">
         <div class="flex items-center gap-3 min-w-0">
@@ -92,10 +97,13 @@
             <span class="text-[10px] text-slate-400 block font-medium truncate">Gestión Escolar</span>
           </div>
         </div>
+        <button onclick="toggleSidebarMobile()" class="lg:hidden text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
 
       <nav class="p-3 space-y-1">
-        <button onclick="cargarInicio()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Inicio">
+        <button onclick="cargarModuloAccion('inicio')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Inicio">
           <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-400 shrink-0"></i>
           <span class="sidebar-text">INICIO</span>
         </button>
@@ -110,9 +118,9 @@
             <i data-lucide="chevron-down" id="arrowDocentes" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subDocentes" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">POF</button>
-            <button onclick="cargarModulo('certificaciones-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Docentes</button>
-            <button onclick="cargarModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Docentes</button>
+            <button onclick="cargarModuloAccion('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">POF</button>
+            <button onclick="cargarModuloAccion('certificaciones-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Docentes</button>
+            <button onclick="cargarModuloAccion('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Docentes</button>
           </div>
         </div>
 
@@ -126,10 +134,10 @@
             <i data-lucide="chevron-down" id="arrowEstudiantes" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subEstudiantes" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('certificaciones-alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Estudiantes</button>
-            <button onclick="cargarModulo('alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Estudiantes</button>
-            <button onclick="cargarModulo('abanderados')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Abanderados y Escoltas</button>
-            <button onclick="cargarModulo('inscripciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Inscripción a 1° Año</button>
+            <button onclick="cargarModuloAccion('certificaciones-alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Estudiantes</button>
+            <button onclick="cargarModuloAccion('alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Estudiantes</button>
+            <button onclick="cargarModuloAccion('abanderados')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Abanderados y Escoltas</button>
+            <button onclick="cargarModuloAccion('inscripciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Inscripción a 1° Año</button>
           </div>
         </div>
 
@@ -143,8 +151,8 @@
             <i data-lucide="chevron-down" id="arrowAcademica" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subAcademica" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('carreras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Carreras</button>
-            <button onclick="cargarModulo('logos-colores')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Logos y Colores</button>
+            <button onclick="cargarModuloAccion('carreras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Carreras</button>
+            <button onclick="cargarModuloAccion('logos-colores')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Logos y Colores</button>
           </div>
         </div>
 
@@ -158,12 +166,11 @@
             <i data-lucide="chevron-down" id="arrowAdmin" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subAdmin" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('examenes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Mesas</button>
-            <button onclick="cargarModulo('consultas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Consultas</button>
-            <button onclick="cargarModulo('inasistencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Informar Inasistencias</button>
-            <!-- CORREGIDO: APUNTA AL MÓDULO LICENCIAS -->
-            <button onclick="cargarModulo('licencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Licencias</button>
-            <button onclick="cargarModulo('calendario')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Calendario Académico</button>
+            <button onclick="cargarModuloAccion('examenes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Mesas</button>
+            <button onclick="cargarModuloAccion('consultas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Consultas</button>
+            <button onclick="cargarModuloAccion('inasistencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Informar Inasistencias</button>
+            <button onclick="cargarModuloAccion('licencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Licencias</button>
+            <button onclick="cargarModuloAccion('calendario')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Calendario Académico</button>
           </div>
         </div>
 
@@ -177,10 +184,10 @@
             <i data-lucide="chevron-down" id="arrowTitulos" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subTitulos" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('analiticos-completos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Completos</button>
-            <button onclick="cargarModulo('analiticos-incompletos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Incompletos</button>
-            <button onclick="cargarModulo('fp3')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Formación Profesional 3</button>
-            <button onclick="cargarModulo('postitulos-titulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
+            <button onclick="cargarModuloAccion('analiticos-completos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Completos</button>
+            <button onclick="cargarModuloAccion('analiticos-incompletos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Incompletos</button>
+            <button onclick="cargarModuloAccion('fp3')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Formación Profesional 3</button>
+            <button onclick="cargarModuloAccion('postitulos-titulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
           </div>
         </div>
 
@@ -194,9 +201,9 @@
             <i data-lucide="chevron-down" id="arrowFormacion" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subFormacion" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('cursos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cursos</button>
-            <button onclick="cargarModulo('postitulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
-            <button onclick="cargarModulo('pagos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Seguimiento de Pagos</button>
+            <button onclick="cargarModuloAccion('cursos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cursos</button>
+            <button onclick="cargarModuloAccion('postitulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
+            <button onclick="cargarModuloAccion('pagos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Seguimiento de Pagos</button>
           </div>
         </div>
 
@@ -210,12 +217,12 @@
             <i data-lucide="chevron-down" id="arrowConfig" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subConfig" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="cargarModulo('reclamos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Reclamos</button>
-            <button onclick="cargarModulo('mejoras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mejoras</button>
-            <button onclick="cargarModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Usuarios</button>
-            <button onclick="cargarModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Roles</button>
-            <button onclick="cargarModulo('firmas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Firmas y Sellos</button>
-            <button onclick="cargarModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mi Plan</button>
+            <button onclick="cargarModuloAccion('reclamos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Reclamos</button>
+            <button onclick="cargarModuloAccion('mejoras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mejoras</button>
+            <button onclick="cargarModuloAccion('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Usuarios</button>
+            <button onclick="cargarModuloAccion('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Roles</button>
+            <button onclick="cargarModuloAccion('firmas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Firmas y Sellos</button>
+            <button onclick="cargarModuloAccion('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mi Plan</button>
           </div>
         </div>
 
@@ -237,25 +244,27 @@
     </div>
   </aside>
 
-  <!-- CONTENEDOR PRINCIPAL CON HEADER SUPERIOR -->
+  <!-- CONTENEDOR PRINCIPAL -->
   <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-    <header class="theme-header h-14 border-b px-6 flex items-center justify-between shadow-sm shrink-0 z-10">
-      <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="p-1.5 hover:bg-slate-800/20 rounded-xl transition-colors text-slate-400 hover:text-emerald-400 cursor-pointer" title="Expandir/Colapsar Menú">
-          <i data-lucide="panel-left-close" id="iconSidebarClose" class="w-5 h-5"></i>
+    <header class="theme-header h-14 border-b px-3 sm:px-6 flex items-center justify-between shadow-sm shrink-0 z-10">
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <!-- BOTÓN DE MENÚ (COMPORTAMIENTO DUAL: MÓVIL / DESKTOP) -->
+        <button onclick="handleMenuToggle()" class="p-1.5 hover:bg-slate-800/20 rounded-xl transition-colors text-slate-400 hover:text-emerald-400 cursor-pointer shrink-0" title="Menú">
+          <i data-lucide="menu" id="iconSidebarMobile" class="w-5 h-5 block lg:hidden"></i>
+          <i data-lucide="panel-left-close" id="iconSidebarClose" class="w-5 h-5 hidden lg:block"></i>
           <i data-lucide="panel-left-open" id="iconSidebarOpen" class="w-5 h-5 hidden"></i>
         </button>
 
-        <h1 id="titulo-modulo" class="font-extrabold text-xs uppercase tracking-wider text-emerald-500">Panel Principal</h1>
+        <h1 id="titulo-modulo" class="font-extrabold text-[11px] sm:text-xs uppercase tracking-wider text-emerald-500 truncate">Panel Principal</h1>
       </div>
 
-      <div class="flex items-center gap-4">
-        <button onclick="toggleTema()" class="p-2 hover:bg-slate-800/20 rounded-xl transition-colors text-amber-400 flex items-center gap-1.5 text-xs font-medium cursor-pointer" title="Cambiar Tema">
+      <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+        <button onclick="toggleTema()" class="p-2 hover:bg-slate-800/20 rounded-xl transition-colors text-amber-400 flex items-center gap-1 text-xs font-medium cursor-pointer" title="Cambiar Tema">
           <i data-lucide="sun" id="iconSun" class="w-4 h-4"></i>
           <i data-lucide="moon" id="iconMoon" class="w-4 h-4 hidden"></i>
         </button>
 
-        <button onclick="toggleFullScreen()" class="p-2 hover:bg-slate-800/20 text-sky-400 rounded-xl transition-colors cursor-pointer" title="Pantalla Completa">
+        <button onclick="toggleFullScreen()" class="hidden sm:flex p-2 hover:bg-slate-800/20 text-sky-400 rounded-xl transition-colors cursor-pointer" title="Pantalla Completa">
           <i data-lucide="maximize" class="w-4 h-4"></i>
         </button>
 
@@ -264,20 +273,20 @@
             <i data-lucide="bell" class="w-4 h-4"></i>
             <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
           </button>
-          <div id="popoverNotif" class="hidden absolute right-0 mt-3 w-72 theme-card border p-4 rounded-2xl shadow-2xl text-xs z-50">
+          <div id="popoverNotif" class="hidden absolute right-0 mt-3 w-64 sm:w-72 theme-card border p-4 rounded-2xl shadow-2xl text-xs z-50">
             <p class="font-bold mb-1">Notificaciones del Sistema</p>
             <p class="text-slate-400 text-[11px]">Servidor conectado en tiempo real. No hay alertas críticas.</p>
           </div>
         </div>
 
-        <div class="text-right border-l pl-4 border-slate-700/40">
-          <span id="clock" class="text-xs font-black block text-emerald-500 min-w-[45px]">--:--</span>
-          <span id="date" class="text-[10px] text-slate-400 block">--/--/----</span>
+        <div class="text-right border-l pl-2 sm:pl-4 border-slate-700/40">
+          <span id="clock" class="text-[11px] sm:text-xs font-black block text-emerald-500 min-w-[40px]">--:--</span>
+          <span id="date" class="text-[9px] sm:text-[10px] text-slate-400 block">--/--/----</span>
         </div>
       </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+    <main class="flex-1 overflow-y-auto p-3 sm:p-6 space-y-6">
       <div id="contenedor-modulo" class="dashboard-panel">
         <!-- Contenido dinámico -->
       </div>
@@ -298,7 +307,16 @@
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
 
-    function toggleSidebar() {
+    // MANEJO DE SIDEBAR DESKTOP Y MÓVIL
+    function handleMenuToggle() {
+      if (window.innerWidth < 1024) {
+        toggleSidebarMobile();
+      } else {
+        toggleSidebarDesktop();
+      }
+    }
+
+    function toggleSidebarDesktop() {
       const sidebar = document.getElementById('sidebarNav');
       const iconClose = document.getElementById('iconSidebarClose');
       const iconOpen = document.getElementById('iconSidebarOpen');
@@ -310,6 +328,30 @@
       } else {
         iconOpen.classList.add('hidden');
         iconClose.classList.remove('hidden');
+      }
+    }
+
+    function toggleSidebarMobile() {
+      const sidebar = document.getElementById('sidebarNav');
+      const overlay = document.getElementById('mobileOverlay');
+
+      if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function cargarModuloAccion(nombreModulo) {
+      if (window.innerWidth < 1024) {
+        toggleSidebarMobile();
+      }
+      if (nombreModulo === 'inicio') {
+        cargarInicio();
+      } else {
+        cargarModulo(nombreModulo);
       }
     }
 
@@ -345,7 +387,7 @@
 
     function toggleSubmenu(idSubmenu, idArrow) {
       const sidebar = document.getElementById('sidebarNav');
-      if (sidebar.classList.contains('sidebar-collapsed')) {
+      if (window.innerWidth >= 1024 && sidebar.classList.contains('sidebar-collapsed')) {
         sidebar.classList.remove('sidebar-collapsed');
         document.getElementById('iconSidebarOpen').classList.add('hidden');
         document.getElementById('iconSidebarClose').classList.remove('hidden');

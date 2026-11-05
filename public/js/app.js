@@ -1,14 +1,119 @@
-// CARGAR MÓDULOS CON SOPORTE PARA HISTORIAL NATIVO Y HASH DE NAVEGACIÓN
+// DATA ESTRUCTURADA DE SECCIONES CON SUS TRÁMITES Y ESTADOS (0/0)
+const SECCIONES_SISTEMA = {
+  'docentes': {
+    titulo: 'DOCENTES',
+    icono: 'briefcase',
+    color: 'emerald',
+    tramites: '3/15 pendientes',
+    submodulos: [
+      { id: 'docentes', titulo: 'POF', desc: 'Planta Orgánico Funcional.', icono: 'file-spreadsheet' },
+      { id: 'certificaciones-docentes', titulo: 'Certificaciones Docentes', desc: 'Emisión de cert. de servicios.', icono: 'award', pendientes: '2' },
+      { id: 'docentes', titulo: 'Legajos Docentes', desc: 'Legajos digitales de profesores.', icono: 'folder-user' },
+      { id: 'horarios-cursado', titulo: 'Horarios de Cursado', desc: 'Grillas horarias y comisiones.', icono: 'clock', pendientes: '1' }
+    ]
+  },
+  'alumnos': {
+    titulo: 'ALUMNOS',
+    icono: 'graduation-cap',
+    color: 'sky',
+    tramites: '5/42 pendientes',
+    submodulos: [
+      { id: 'certificaciones-alumnos', titulo: 'Certificaciones Estudiantes', desc: 'Constancias de alumno regular.', icono: 'file-check', pendientes: '3' },
+      { id: 'alumnos', titulo: 'Legajos Estudiantes', desc: 'Fichas personales y legajos.', icono: 'users' },
+      { id: 'abanderados', titulo: 'Abanderados y Escoltas', desc: 'Escalafón por promedio.', icono: 'flag' },
+      { id: 'inscripciones', titulo: 'Inscripción a 1° Año', desc: 'Formularios para ingresantes.', icono: 'user-plus', pendientes: '2' },
+      { id: 'equivalencias', titulo: 'Equivalencias', desc: 'Solicitudes y resoluciones.', icono: 'arrow-right-left' }
+    ]
+  },
+  'academica': {
+    titulo: 'GESTIÓN ACADÉMICA',
+    icono: 'book-open',
+    color: 'amber',
+    tramites: '0/8 pendientes',
+    submodulos: [
+      { id: 'carreras', titulo: 'Carreras', desc: 'Tecnicaturas y planes de estudio.', icono: 'layers' }
+    ]
+  },
+  'admin': {
+    titulo: 'GESTIÓN ADMINISTRATIVA',
+    icono: 'clipboard-list',
+    color: 'purple',
+    tramites: '4/28 pendientes',
+    submodulos: [
+      { id: 'examenes', titulo: 'Cronograma de Mesas', desc: 'Fechas de exámenes y tribunales.', icono: 'calendar', pendientes: '1' },
+      { id: 'consultas', titulo: 'Cronograma de Consultas', desc: 'Horarios de consulta docente.', icono: 'help-circle' },
+      { id: 'inasistencias', titulo: 'Informar Inasistencias', desc: 'Avisos diarios de sedes.', icono: 'user-x', pendientes: '2' },
+      { id: 'licencias', titulo: 'Licencias', desc: 'Trámites de licencias y adjuntos.', icono: 'file-text', pendientes: '1' },
+      { id: 'calendario', titulo: 'Calendario Académico', desc: 'Recesos y fechas clave.', icono: 'calendar-days' },
+      { id: 'resoluciones', titulo: 'Historial de Resoluciones', desc: 'Archivo de resoluciones IES.', icono: 'file-digit' },
+      { id: 'planillas-asistencia', titulo: 'Planillas de Asistencia', desc: 'Listados de asistencia y regularidad.', icono: 'check-square' },
+      { id: 'gestor-tareas', titulo: 'Gestor de Tareas', desc: 'Asignación de tareas a usuarios.', icono: 'list-todo' }
+    ]
+  },
+  'titulos': {
+    titulo: 'TÍTULOS',
+    icono: 'award',
+    color: 'indigo',
+    tramites: '6/19 pendientes',
+    submodulos: [
+      { id: 'analiticos-completos', titulo: 'Analíticos Completos', desc: 'Diplomas y analíticos finales.', icono: 'graduation-cap', pendientes: '4' },
+      { id: 'analiticos-incompletos', titulo: 'Analíticos Incompletos', desc: 'Certificados parciales.', icono: 'file-minus' },
+      { id: 'fp3', titulo: 'Formación Profesional 3', desc: 'Certificaciones FP3.', icono: 'briefcase' },
+      { id: 'postitulos-titulos', titulo: 'Postítulos', desc: 'Titulaciones de postítulos.', icono: 'scroll' },
+      { id: 'readmision', titulo: 'Resolución de Readmisión', desc: 'Solicitudes de readmisión.', icono: 'user-check', pendientes: '1' },
+      { id: 'terminalidad', titulo: 'Resolución de Terminalidad', desc: 'Certificados de terminalidad.', icono: 'check-circle-2', pendientes: '1' }
+    ]
+  },
+  'formacion': {
+    titulo: 'FORMACIÓN CONTINUA',
+    icono: 'school',
+    color: 'rose',
+    tramites: '1/12 pendientes',
+    submodulos: [
+      { id: 'cursos', titulo: 'Cursos', desc: 'Oferta de capacitaciones.', icono: 'book' },
+      { id: 'postitulos', titulo: 'Postítulos', desc: 'Especializaciones y diplomaturas.', icono: 'award' },
+      { id: 'pagos', titulo: 'Seguimiento de Pagos', desc: 'Control de cuotas e inscriptos.', icono: 'credit-card', pendientes: '1' }
+    ]
+  },
+  'comunicacion': {
+    titulo: 'COMUNICACIÓN',
+    icono: 'megaphone',
+    color: 'emerald',
+    tramites: '0/3 pendientes',
+    submodulos: [
+      { id: 'comunicacion', titulo: 'Tablón de Anuncios', desc: 'Publicar novedades generales para sedes.', icono: 'megaphone' }
+    ]
+  },
+  'config': {
+    titulo: 'CONFIGURACIÓN',
+    icono: 'settings',
+    color: 'teal',
+    tramites: '0/5 pendientes',
+    submodulos: [
+      { id: 'reclamos', titulo: 'Reclamos', desc: 'Tickets y soporte.', icono: 'alert-triangle' },
+      { id: 'mejoras', titulo: 'Mejoras', desc: 'Sugerencias de funciones.', icono: 'sparkles' },
+      { id: 'usuarios', titulo: 'Usuarios y Roles', desc: 'Gestión de cuentas del sistema.', icono: 'users' },
+      { id: 'firmas', titulo: 'Firmas y Sellos', desc: 'Sellos digitales autorizados.', icono: 'pen-tool' },
+      { id: 'datos-personales', titulo: 'Mis Datos Personales', desc: 'Cambio de clave y perfil.', icono: 'user' }
+    ]
+  }
+};
+
 async function cargarModulo(nombreModulo, pushToHistory = true) {
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
 
+  // SI SE SELECCIONA UNA CATEGORÍA DE SECCIÓN (ej. 'titulos', 'alumnos')
+  if (SECCIONES_SISTEMA[nombreModulo]) {
+    mostrarSeccionConTarjetas(nombreModulo);
+    if (pushToHistory) history.pushState({ modulo: nombreModulo }, '', `#${nombreModulo}`);
+    return;
+  }
+
   try {
-    // 1. Cargar la vista HTML del módulo
     const resHtml = await fetch(`js/modulos/${nombreModulo}.html`);
     
     if (!resHtml.ok) {
-      // Si el sub-módulo aún no existe, mostrar pantalla elegante "En desarrollo"
       contenedor.innerHTML = `
         <div class="theme-card border p-8 rounded-3xl text-center max-w-xl mx-auto my-12 shadow-xl space-y-4">
           <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto">
@@ -19,15 +124,14 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
           <button onclick="cargarInicio()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-emerald-500 transition-colors">Volver al Inicio</button>
         </div>
       `;
-      titulo.textContent = nombreModulo.replace('-', ' ').toUpperCase();
+      titulo.textContent = 'I.E.S. N° 9-029';
       if (window.lucide) lucide.createIcons();
       return;
     }
 
     contenedor.innerHTML = await resHtml.text();
-    titulo.textContent = nombreModulo.replace('-', ' ').toUpperCase();
+    titulo.textContent = 'I.E.S. N° 9-029';
 
-    // 2. Cargar dinámicamente el script JS si no está cargado
     if (!document.getElementById(`script-${nombreModulo}`)) {
       const script = document.createElement('script');
       script.id = `script-${nombreModulo}`;
@@ -44,7 +148,6 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
       if (window.lucide) lucide.createIcons();
     }
 
-    // 3. REGISTRAR RUTA EN EL HISTORIAL DEL NAVEGADOR
     if (pushToHistory) {
       history.pushState({ modulo: nombreModulo }, '', `#${nombreModulo}`);
     }
@@ -54,48 +157,160 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
   }
 }
 
-function cargarInicio(pushToHistory = true) {
+// MOSTRAR PANTALLA DE TARJETAS POR SECCIÓN CON TRAMITES POR RESOLVER
+function mostrarSeccionConTarjetas(keySeccion) {
+  const sec = SECCIONES_SISTEMA[keySeccion];
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
-  titulo.textContent = 'INICIO GENERAL';
+  titulo.textContent = 'I.E.S. N° 9-029';
+
+  let htmlTarjetas = sec.submodulos.map(sub => `
+    <div onclick="cargarModulo('${sub.id}')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group relative overflow-hidden">
+      <div class="flex items-center justify-between">
+        <i data-lucide="${sub.icono}" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+        ${sub.pendientes ? `<span class="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-black rounded-full">${sub.pendientes} pendientes</span>` : ''}
+      </div>
+      <div>
+        <h3 class="font-extrabold text-sm text-white group-hover:text-emerald-400 transition-colors">${sub.titulo}</h3>
+        <p class="text-xs text-slate-400 mt-1">${sub.desc}</p>
+      </div>
+    </div>
+  `).join('');
 
   contenedor.innerHTML = `
     <div class="space-y-6">
-      <!-- TARJETA DE BIENVENIDA -->
-      <div class="theme-card border p-6 rounded-3xl relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="space-y-2 max-w-xl">
-          <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Sistema Operativo</span>
-          <h2 class="text-xl font-black">Bienvenido al Panel de Gestión I.E.S. N° 9-029</h2>
-          <p class="text-xs text-slate-400">Selecciona cualquier opción de la barra lateral desplegable para acceder a las áreas de Docentes, Alumnos, Gestión Académica y Títulos.</p>
+      <div class="theme-card border p-6 rounded-3xl flex items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="${sec.icono}" class="w-3.5 h-3.5"></i> ${sec.titulo}
+            </span>
+          </div>
+          <h2 class="text-xl font-black text-white">Submódulos y Trámites de ${sec.titulo}</h2>
         </div>
-        <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-16 bg-white p-2 rounded-2xl shadow-md object-contain shrink-0" alt="Logo IES">
+        <div class="text-right shrink-0">
+          <span class="text-xs font-black text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 block">
+            Trámites: ${sec.tramites}
+          </span>
+        </div>
       </div>
 
-      <!-- ACCESOS RÁPIDOS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${htmlTarjetas}
+      </div>
+    </div>
+  `;
+  if (window.lucide) lucide.createIcons();
+}
+
+// INICIO PRINCIPAL CON SECCIONES GENERALES
+function cargarInicio(pushToHistory = true) {
+  const contenedor = document.getElementById('contenedor-modulo');
+  const titulo = document.getElementById('titulo-modulo');
+  titulo.textContent = 'I.E.S. N° 9-029';
+
+  contenedor.innerHTML = `
+    <div class="space-y-6">
+      <div class="theme-card border p-6 rounded-3xl relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-2 max-w-2xl">
+          <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Sistema Operativo Integrado</span>
+          <h2 class="text-xl font-black tracking-tight">Bienvenido al Sistema de Gestión I.E.S. N° 9-029</h2>
+          <p class="text-xs text-slate-400 leading-relaxed">Seleccione cualquiera de las áreas del sistema para administrar legajos, calendarios, mesas de examen y solicitudes.</p>
+        </div>
+        <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-16 bg-white p-2 rounded-2xl shadow-md object-contain shrink-0" alt="Logo IES 9-029">
+      </div>
+
+      <!-- SECCIONES PRINCIPALES DEL SISTEMA CON SUS TRÁMITES -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div onclick="cargarModulo('alumnos')" class="theme-card border p-5 rounded-2xl hover:border-sky-500 cursor-pointer transition-all space-y-2 group">
-          <i data-lucide="graduation-cap" class="w-6 h-6 text-sky-400 group-hover:scale-110 transition-transform"></i>
-          <h3 class="font-extrabold text-sm">Alumnos</h3>
-          <p class="text-xs text-slate-400">Legajos, certificaciones y abanderados.</p>
+        
+        <div onclick="cargarModulo('docentes')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="briefcase" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">3 trámites</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">DOCENTES</h3>
+            <p class="text-xs text-slate-400 mt-1">POF, legajos, certificaciones y horarios.</p>
+          </div>
         </div>
 
-        <div onclick="cargarModulo('inasistencias')" class="theme-card border p-5 rounded-2xl hover:border-amber-500 cursor-pointer transition-all space-y-2 group">
-          <i data-lucide="user-x" class="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform"></i>
-          <h3 class="font-extrabold text-sm">Inasistencias / Tardanzas</h3>
-          <p class="text-xs text-slate-400">Avisos y novedades diarias de sedes.</p>
+        <div onclick="cargarModulo('alumnos')" class="theme-card border p-5 rounded-2xl hover:border-sky-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="graduation-cap" class="w-6 h-6 text-sky-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">5 trámites</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">ALUMNOS</h3>
+            <p class="text-xs text-slate-400 mt-1">Legajos, certificaciones y equivalencias.</p>
+          </div>
         </div>
 
-        <div onclick="cargarModulo('licencias')" class="theme-card border p-5 rounded-2xl hover:border-rose-500 cursor-pointer transition-all space-y-2 group">
-          <i data-lucide="file-text" class="w-6 h-6 text-rose-400 group-hover:scale-110 transition-transform"></i>
-          <h3 class="font-extrabold text-sm">Licencias Docentes</h3>
-          <p class="text-xs text-slate-400">Solicitudes, trámites y visor de adjuntos.</p>
+        <div onclick="cargarModulo('academica')" class="theme-card border p-5 rounded-2xl hover:border-amber-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="book-open" class="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Al día</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">GESTIÓN ACADÉMICA</h3>
+            <p class="text-xs text-slate-400 mt-1">Planes de estudio y carreras.</p>
+          </div>
         </div>
 
-        <div onclick="cargarModulo('usuarios')" class="theme-card border p-5 rounded-2xl hover:border-teal-500 cursor-pointer transition-all space-y-2 group">
-          <i data-lucide="settings" class="w-6 h-6 text-teal-400 group-hover:scale-110 transition-transform"></i>
-          <h3 class="font-extrabold text-sm">Configuración</h3>
-          <p class="text-xs text-slate-400">Usuarios, roles y estado del plan.</p>
+        <div onclick="cargarModulo('admin')" class="theme-card border p-5 rounded-2xl hover:border-purple-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="clipboard-list" class="w-6 h-6 text-purple-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">4 trámites</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">GESTIÓN ADMINISTRATIVA</h3>
+            <p class="text-xs text-slate-400 mt-1">Mesas, inasistencias y licencias.</p>
+          </div>
         </div>
+
+        <div onclick="cargarModulo('titulos')" class="theme-card border p-5 rounded-2xl hover:border-indigo-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="award" class="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">6 trámites</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">TÍTULOS</h3>
+            <p class="text-xs text-slate-400 mt-1">Analíticos, terminalidad y readmisión.</p>
+          </div>
+        </div>
+
+        <div onclick="cargarModulo('formacion')" class="theme-card border p-5 rounded-2xl hover:border-rose-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="school" class="w-6 h-6 text-rose-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">1 trámite</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">FORMACIÓN CONTINUA</h3>
+            <p class="text-xs text-slate-400 mt-1">Cursos, postítulos y pagos.</p>
+          </div>
+        </div>
+
+        <div onclick="cargarModulo('comunicacion')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="megaphone" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Al día</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">COMUNICACIÓN</h3>
+            <p class="text-xs text-slate-400 mt-1">Tablón de anuncios institucionales.</p>
+          </div>
+        </div>
+
+        <div onclick="cargarModulo('config')" class="theme-card border p-5 rounded-2xl hover:border-teal-500 cursor-pointer transition-all space-y-3 group">
+          <div class="flex items-center justify-between">
+            <i data-lucide="settings" class="w-6 h-6 text-teal-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Configuración</span>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-white">CONFIGURACIÓN</h3>
+            <p class="text-xs text-slate-400 mt-1">Usuarios, roles y datos personales.</p>
+          </div>
+        </div>
+
       </div>
     </div>
   `;
@@ -106,34 +321,29 @@ function cargarInicio(pushToHistory = true) {
   }
 }
 
-// ESCUCHAR BOTÓN DE VOLVER / ATRÁS DEL NAVEGADOR
 window.addEventListener('popstate', (event) => {
   if (event.state && event.state.modulo) {
-    if (event.state.modulo === 'inicio') {
-      cargarInicio(false);
-    } else {
-      cargarModulo(event.state.modulo, false);
-    }
+    if (event.state.modulo === 'inicio') cargarInicio(false);
+    else cargarModulo(event.state.modulo, false);
   } else {
     const hash = window.location.hash.replace('#', '');
-    if (hash && hash !== 'inicio') {
-      cargarModulo(hash, false);
-    } else {
-      cargarInicio(false);
-    }
+    if (hash && hash !== 'inicio') cargarModulo(hash, false);
+    else cargarInicio(false);
   }
 });
 
-// INICIALIZACIÓN INTELIGENTE DE RUTA AL RECARGAR PÁGINA
 function inicializarRutaHash() {
   const hash = window.location.hash.replace('#', '');
-  if (hash && hash !== 'inicio') {
-    cargarModulo(hash, false);
-  } else {
-    cargarInicio(false);
-  }
+  if (hash && hash !== 'inicio') cargarModulo(hash, false);
+  else cargarInicio(false);
 }
 
 function cerrarSesion() {
   document.getElementById('modalDesktopLogin').classList.remove('hidden');
+  const sidebar = document.getElementById('sidebarNav');
+  const header = document.getElementById('mainHeader');
+  sidebar.classList.add('hidden');
+  sidebar.classList.remove('flex');
+  header.classList.add('hidden');
+  header.classList.remove('flex');
 }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gestión Institucional - I.E.S. N° 9-029</title>
 
-  <!-- LIBRERÍAS DE EXCEL, PDF Y GRÁFICOS -->
+  <!-- LIBRERÍAS EXTERNAS -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -17,15 +17,15 @@
     * { user-select: none; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, width 0.3s ease, transform 0.3s ease; }
     body { font-size: 13px; }
 
-    /* MODO CLARO EXECUTIVE */
-    body.theme-light { background-color: #f8fafc; color: #0f172a; }
-    body.theme-light .theme-card { background-color: #ffffff; color: #0f172a; border-color: #e2e8f0; }
-    body.theme-light .theme-header { background-color: #ffffff; color: #0f172a; border-color: #e2e8f0; }
-    body.theme-light aside { background-color: #ffffff; border-color: #e2e8f0; color: #334155; }
+    /* MODO CLARO EXECUTIVE LIGHT */
+    body.theme-light { background-color: #f1f5f9; color: #0f172a; }
+    body.theme-light .theme-card { background-color: #ffffff; color: #0f172a; border-color: #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    body.theme-light .theme-header { background-color: #ffffff; color: #0f172a; border-color: #cbd5e1; }
+    body.theme-light aside { background-color: #ffffff; border-color: #cbd5e1; color: #334155; }
     body.theme-light .nav-btn { color: #475569; }
-    body.theme-light .nav-btn:hover { background-color: #f1f5f9; color: #0f172a; }
-    body.theme-light .subnav-btn { color: #64748b; }
-    body.theme-light .subnav-btn:hover { background-color: #f8fafc; color: #0f172a; }
+    body.theme-light .nav-btn:hover { background-color: #e2e8f0; color: #0f172a; }
+    body.theme-light .subnav-btn { color: #475569; }
+    body.theme-light .subnav-btn:hover { background-color: #f1f5f9; color: #059669; font-weight: 700; }
 
     /* MODO OSCURO SLATE */
     body.theme-dark { background-color: #0f172a; color: #f8fafc; }
@@ -37,7 +37,6 @@
     body.theme-dark .subnav-btn { color: #94a3b8; }
     body.theme-dark .subnav-btn:hover { background-color: #1e293b; color: #38bdf8; }
 
-    /* ESTILOS DE DESKTOP Y COLAPSO EN PANTALLAS GRANDES */
     @media (min-width: 1024px) {
       aside.sidebar-collapsed { width: 5rem !important; }
       aside.sidebar-collapsed .sidebar-text,
@@ -57,10 +56,41 @@
 </head>
 <body id="mainBody" class="h-screen w-screen flex overflow-hidden theme-dark relative">
 
-  <!-- OVERLAY FLOTANTE OSCURO PARA MÓVILES -->
+  <!-- OVERLAY MÓVIL -->
   <div id="mobileOverlay" onclick="cerrarMenuMobile()" class="hidden fixed inset-0 bg-slate-950/80 z-40 lg:hidden backdrop-blur-sm transition-opacity"></div>
 
-  <!-- MODAL LOGIN (PANTALLA COMPLETA HASTA AUTENTICAR) -->
+  <!-- MODAL CAMBIAR CONTRASEÑA -->
+  <div id="modalChangePass" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="theme-card border max-w-sm w-full p-6 rounded-3xl shadow-2xl relative space-y-4">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-700/50">
+        <h3 class="font-extrabold text-sm flex items-center gap-2 text-amber-400">
+          <i data-lucide="key" class="w-4 h-4"></i> Cambiar Contraseña
+        </h3>
+        <button onclick="cerrarModalPass()" class="text-slate-400 hover:text-rose-500"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Contraseña Actual</label>
+          <input type="password" id="passActual" class="w-full bg-slate-800/40 border border-slate-700/80 rounded-xl p-2.5 text-xs outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nueva Contraseña</label>
+          <input type="password" id="passNueva1" class="w-full bg-slate-800/40 border border-slate-700/80 rounded-xl p-2.5 text-xs outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Repetir Nueva Contraseña</label>
+          <input type="password" id="passNueva2" class="w-full bg-slate-800/40 border border-slate-700/80 rounded-xl p-2.5 text-xs outline-none focus:border-emerald-500">
+        </div>
+
+        <button type="button" onclick="guardarNuevaContrasena()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold p-2.5 rounded-xl text-xs shadow-md mt-2 transition-all">
+          Guardar Nueva Contraseña
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LOGIN (OCULTA TODO EL SISTEMA AL INICIAR) -->
   <div id="modalDesktopLogin" class="fixed inset-0 z-50 bg-[#0f172a] flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-sm w-full p-6 sm:p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden my-auto">
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
@@ -86,8 +116,8 @@
     </div>
   </div>
 
-  <!-- SIDEBAR LATERAL MENU (INICIA OCULTO CON 'hidden') -->
-  <aside id="sidebarNav" class="hidden fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-64 -translate-x-full lg:translate-x-0 lg:flex flex-col justify-between shrink-0 border-r shadow-2xl lg:shadow-none bg-[#0f172a]">
+  <!-- SIDEBAR LATERAL (INICIA TOTALMENTE OCULTO) -->
+  <aside id="sidebarNav" class="hidden fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-64 -translate-x-full lg:translate-x-0 flex-col justify-between shrink-0 border-r shadow-2xl lg:shadow-none bg-[#0f172a]">
     <div class="overflow-y-auto">
       <div class="header-container p-4 border-b border-slate-800/50 flex items-center justify-between">
         <div class="flex items-center gap-3 min-w-0">
@@ -110,119 +140,202 @@
 
         <!-- DOCENTES -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subDocentes', 'arrowDocentes')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Docentes">
+          <button onclick="toggleSubmenu('subDocentes', 'arrowDocentes')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="briefcase" class="w-4 h-4 text-emerald-400 shrink-0"></i>
               <span class="sidebar-text truncate">DOCENTES</span>
             </span>
             <i data-lucide="chevron-down" id="arrowDocentes" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subDocentes" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">POF</button>
-            <button onclick="ejecutarAccionModulo('certificaciones-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Docentes</button>
-            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Docentes</button>
+          <div id="subDocentes" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 shrink-0"></i> POF
+            </button>
+            <button onclick="ejecutarAccionModulo('certificaciones-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="award" class="w-3.5 h-3.5 shrink-0"></i> CERTIFICACIONES DOCENTES
+            </button>
+            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="folder-user" class="w-3.5 h-3.5 shrink-0"></i> LEGAJOS DOCENTES
+            </button>
+            <button onclick="ejecutarAccionModulo('horarios-cursado')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0"></i> HORARIOS DE CURSADO
+            </button>
           </div>
         </div>
 
-        <!-- ESTUDIANTES -->
+        <!-- ALUMNOS -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subEstudiantes', 'arrowEstudiantes')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Alumnos">
+          <button onclick="toggleSubmenu('subEstudiantes', 'arrowEstudiantes')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="graduation-cap" class="w-4 h-4 text-sky-400 shrink-0"></i>
               <span class="sidebar-text truncate">ALUMNOS</span>
             </span>
             <i data-lucide="chevron-down" id="arrowEstudiantes" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subEstudiantes" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('certificaciones-alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Certificaciones Estudiantes</button>
-            <button onclick="ejecutarAccionModulo('alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Legajos Estudiantes</button>
-            <button onclick="ejecutarAccionModulo('abanderados')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Abanderados y Escoltas</button>
-            <button onclick="ejecutarAccionModulo('inscripciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Inscripción a 1° Año</button>
+          <div id="subEstudiantes" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('certificaciones-alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="file-check" class="w-3.5 h-3.5 shrink-0"></i> CERTIFICACIONES ESTUDIANTES
+            </button>
+            <button onclick="ejecutarAccionModulo('alumnos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i> LEGAJOS ESTUDIANTES
+            </button>
+            <button onclick="ejecutarAccionModulo('abanderados')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="flag" class="w-3.5 h-3.5 shrink-0"></i> ABANDERADOS Y ESCOLTAS
+            </button>
+            <button onclick="ejecutarAccionModulo('inscripciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5 shrink-0"></i> INSCRIPCIÓN A 1° AÑO
+            </button>
+            <button onclick="ejecutarAccionModulo('equivalencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="arrow-right-left" class="w-3.5 h-3.5 shrink-0"></i> EQUIVALENCIAS
+            </button>
           </div>
         </div>
 
         <!-- GESTIÓN ACADÉMICA -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subAcademica', 'arrowAcademica')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Gestión Académica">
+          <button onclick="toggleSubmenu('subAcademica', 'arrowAcademica')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="book-open" class="w-4 h-4 text-amber-400 shrink-0"></i>
               <span class="sidebar-text truncate">GESTIÓN ACADÉMICA</span>
             </span>
             <i data-lucide="chevron-down" id="arrowAcademica" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subAcademica" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('carreras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Carreras</button>
-            <button onclick="ejecutarAccionModulo('logos-colores')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Logos y Colores</button>
+          <div id="subAcademica" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('carreras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="layers" class="w-3.5 h-3.5 shrink-0"></i> CARRERAS
+            </button>
           </div>
         </div>
 
         <!-- GESTIÓN ADMINISTRATIVA -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subAdmin', 'arrowAdmin')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Gestión Administrativa">
+          <button onclick="toggleSubmenu('subAdmin', 'arrowAdmin')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="clipboard-list" class="w-4 h-4 text-purple-400 shrink-0"></i>
               <span class="sidebar-text truncate">GESTIÓN ADMINISTRATIVA</span>
             </span>
             <i data-lucide="chevron-down" id="arrowAdmin" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subAdmin" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('examenes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Mesas</button>
-            <button onclick="ejecutarAccionModulo('consultas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cronograma de Consultas</button>
-            <button onclick="ejecutarAccionModulo('inasistencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Informar Inasistencias</button>
-            <button onclick="ejecutarAccionModulo('licencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Licencias</button>
-            <button onclick="ejecutarAccionModulo('calendario')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Calendario Académico</button>
+          <div id="subAdmin" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('examenes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i> CRONOGRAMA DE MESAS
+            </button>
+            <button onclick="ejecutarAccionModulo('consultas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5 shrink-0"></i> CRONOGRAMA DE CONSULTAS
+            </button>
+            <button onclick="ejecutarAccionModulo('inasistencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="user-x" class="w-3.5 h-3.5 shrink-0"></i> INFORMAR INASISTENCIAS
+            </button>
+            <button onclick="ejecutarAccionModulo('licencias')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 shrink-0"></i> LICENCIAS
+            </button>
+            <button onclick="ejecutarAccionModulo('calendario')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0"></i> CALENDARIO ACADÉMICO
+            </button>
+            <button onclick="ejecutarAccionModulo('resoluciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="file-digit" class="w-3.5 h-3.5 shrink-0"></i> HISTORIAL DE RESOLUCIONES
+            </button>
+            <button onclick="ejecutarAccionModulo('planillas-asistencia')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="check-square" class="w-3.5 h-3.5 shrink-0"></i> PLANILLAS DE ASISTENCIA Y REGULARIDAD
+            </button>
+            <button onclick="ejecutarAccionModulo('gestor-tareas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="list-todo" class="w-3.5 h-3.5 shrink-0"></i> GESTOR DE TAREAS INSTITUCIONAL
+            </button>
           </div>
         </div>
 
         <!-- TÍTULOS -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subTitulos', 'arrowTitulos')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Títulos">
+          <button onclick="toggleSubmenu('subTitulos', 'arrowTitulos')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="award" class="w-4 h-4 text-indigo-400 shrink-0"></i>
               <span class="sidebar-text truncate">TÍTULOS</span>
             </span>
             <i data-lucide="chevron-down" id="arrowTitulos" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subTitulos" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('analiticos-completos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Completos</button>
-            <button onclick="ejecutarAccionModulo('analiticos-incompletos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Analíticos Incompletos</button>
-            <button onclick="ejecutarAccionModulo('fp3')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Formación Profesional 3</button>
-            <button onclick="ejecutarAccionModulo('postitulos-titulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
+          <div id="subTitulos" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('analiticos-completos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="graduation-cap" class="w-3.5 h-3.5 shrink-0"></i> ANALÍTICOS COMPLETOS
+            </button>
+            <button onclick="ejecutarAccionModulo('analiticos-incompletos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="file-minus" class="w-3.5 h-3.5 shrink-0"></i> ANALÍTICOS INCOMPLETOS
+            </button>
+            <button onclick="ejecutarAccionModulo('fp3')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="briefcase" class="w-3.5 h-3.5 shrink-0"></i> FORMACIÓN PROFESIONAL 3
+            </button>
+            <button onclick="ejecutarAccionModulo('postitulos-titulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="scroll" class="w-3.5 h-3.5 shrink-0"></i> POSTÍTULOS
+            </button>
+            <button onclick="ejecutarAccionModulo('readmision')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="user-check" class="w-3.5 h-3.5 shrink-0"></i> RESOLUCIÓN DE READMISIÓN
+            </button>
+            <button onclick="ejecutarAccionModulo('terminalidad')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 shrink-0"></i> RESOLUCIÓN DE TERMINALIDAD
+            </button>
           </div>
         </div>
 
         <!-- FORMACIÓN CONTINUA -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subFormacion', 'arrowFormacion')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Formación Continua">
+          <button onclick="toggleSubmenu('subFormacion', 'arrowFormacion')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="school" class="w-4 h-4 text-rose-400 shrink-0"></i>
               <span class="sidebar-text truncate">FORMACIÓN CONTINUA</span>
             </span>
             <i data-lucide="chevron-down" id="arrowFormacion" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subFormacion" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('cursos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Cursos</button>
-            <button onclick="ejecutarAccionModulo('postitulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Postítulos</button>
-            <button onclick="ejecutarAccionModulo('pagos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Seguimiento de Pagos</button>
+          <div id="subFormacion" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('cursos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="book" class="w-3.5 h-3.5 shrink-0"></i> CURSOS
+            </button>
+            <button onclick="ejecutarAccionModulo('postitulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="award" class="w-3.5 h-3.5 shrink-0"></i> POSTÍTULOS
+            </button>
+            <button onclick="ejecutarAccionModulo('pagos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="credit-card" class="w-3.5 h-3.5 shrink-0"></i> SEGUIMIENTO DE PAGOS
+            </button>
           </div>
         </div>
 
+        <!-- COMUNICACIÓN -->
+        <button onclick="ejecutarAccionModulo('comunicacion')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors text-emerald-400">
+          <i data-lucide="megaphone" class="w-4 h-4 shrink-0"></i>
+          <span class="sidebar-text">COMUNICACIÓN</span>
+        </button>
+
         <!-- CONFIGURACIÓN -->
         <div class="menu-group">
-          <button onclick="toggleSubmenu('subConfig', 'arrowConfig')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors" title="Configuración">
+          <button onclick="toggleSubmenu('subConfig', 'arrowConfig')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
               <i data-lucide="settings" class="w-4 h-4 text-teal-400 shrink-0"></i>
               <span class="sidebar-text truncate">CONFIGURACIÓN</span>
             </span>
             <i data-lucide="chevron-down" id="arrowConfig" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
-          <div id="subConfig" class="submenu-container hidden pl-8 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('reclamos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Reclamos</button>
-            <button onclick="ejecutarAccionModulo('mejoras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mejoras</button>
-            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Usuarios</button>
-            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Roles</button>
-            <button onclick="ejecutarAccionModulo('firmas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Firmas y Sellos</button>
-            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold block truncate">Mi Plan</button>
+          <div id="subConfig" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
+            <button onclick="ejecutarAccionModulo('reclamos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0"></i> RECLAMOS
+            </button>
+            <button onclick="ejecutarAccionModulo('mejoras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0"></i> MEJORAS
+            </button>
+            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i> USUARIOS
+            </button>
+            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="shield" class="w-3.5 h-3.5 shrink-0"></i> ROLES
+            </button>
+            <button onclick="ejecutarAccionModulo('firmas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="pen-tool" class="w-3.5 h-3.5 shrink-0"></i> FIRMAS Y SELLOS
+            </button>
+            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0"></i> MI PLAN
+            </button>
+            <!-- LLAVE UBICADA DENTRO DE MIS DATOS PERSONALES -->
+            <button onclick="abrirModalPass()" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center justify-between truncate text-amber-400">
+              <span class="flex items-center gap-2"><i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i> MIS DATOS PERSONALES</span>
+              <i data-lucide="key" class="w-3.5 h-3.5 shrink-0"></i>
+            </button>
           </div>
         </div>
 
@@ -235,7 +348,7 @@
         <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-black text-white text-[11px] shrink-0">SA</div>
         <div class="profile-info min-w-0">
           <p id="lblUserNombre" class="text-xs font-bold truncate">Super Admin</p>
-          <p id="lblUserRol" class="text-[10px] text-slate-400 truncate">FULL ACCESS</p>
+          <span id="lblUserRol" class="text-[9px] text-slate-400 font-bold uppercase block truncate">FULL ACCESS</span>
         </div>
       </div>
       <button onclick="cerrarSesion()" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition-colors" title="Cerrar Sesión">
@@ -244,17 +357,16 @@
     </div>
   </aside>
 
-  <!-- CONTENEDOR PRINCIPAL CON HEADER SUPERIOR -->
+  <!-- CONTENEDOR PRINCIPAL -->
   <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-    <!-- HEADER (INICIA OCULTO CON 'hidden') -->
+    <!-- HEADER -->
     <header id="mainHeader" class="hidden theme-header h-14 border-b px-3 sm:px-6 flex items-center justify-between shadow-sm shrink-0 z-10">
       <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-        <!-- BOTÓN DE HAMBURGUESA / COLAPSO -->
-        <button type="button" onclick="toggleMenuBoton()" class="p-2 hover:bg-slate-800/20 rounded-xl transition-colors text-slate-400 hover:text-emerald-400 cursor-pointer shrink-0" title="Abrir Menú">
+        <button type="button" onclick="toggleMenuBoton()" class="p-2 hover:bg-slate-800/20 rounded-xl transition-colors text-slate-400 hover:text-emerald-400 cursor-pointer shrink-0">
           <i data-lucide="menu" id="iconMenuBtn" class="w-5 h-5"></i>
         </button>
 
-        <h1 id="titulo-modulo" class="font-extrabold text-[11px] sm:text-xs uppercase tracking-wider text-emerald-500 truncate">Panel Principal</h1>
+        <h1 id="titulo-modulo" class="font-extrabold text-[11px] sm:text-xs uppercase tracking-wider text-emerald-500 truncate">I.E.S. N° 9-029</h1>
       </div>
 
       <div class="flex items-center gap-2 sm:gap-4 shrink-0">
@@ -267,14 +379,52 @@
           <i data-lucide="maximize" class="w-4 h-4"></i>
         </button>
 
+        <!-- NOTIFICACIONES CON HISTORIAL CLARO -->
         <div class="relative">
           <button type="button" onclick="toggleNotificaciones()" class="p-2 hover:bg-slate-800/20 text-amber-400 rounded-xl relative transition-colors cursor-pointer">
             <i data-lucide="bell" class="w-4 h-4"></i>
-            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span id="badgeNotif" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-pulse">2</span>
           </button>
-          <div id="popoverNotif" class="hidden absolute right-0 mt-3 w-64 sm:w-72 theme-card border p-4 rounded-2xl shadow-2xl text-xs z-50">
-            <p class="font-bold mb-1">Notificaciones del Sistema</p>
-            <p class="text-slate-400 text-[11px]">Servidor conectado en tiempo real. No hay alertas críticas.</p>
+
+          <!-- POPOVER NOTIFICACIONES -->
+          <div id="popoverNotif" class="hidden absolute right-0 mt-3 w-80 theme-card border p-4 rounded-2xl shadow-2xl text-xs z-50 space-y-3">
+            <div class="flex items-center justify-between border-b pb-2 border-slate-700/40">
+              <p class="font-black text-xs text-emerald-500">Historial de Notificaciones</p>
+              <span id="lblCantNotif" class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full font-bold">2 sin leer</span>
+            </div>
+
+            <div id="listaNotificaciones" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+              <!-- Notificación No Leída 1 -->
+              <div id="notif-1" class="p-3 rounded-2xl bg-slate-800/90 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-sm transition-all">
+                <div class="space-y-0.5 cursor-pointer flex-1" onclick="ejecutarAccionModulo('licencias')">
+                  <p class="font-bold text-[11px] text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Nueva Solicitud de Licencia</p>
+                  <p class="text-[10px] text-slate-300">Prof. Juana Pérez - 3 días</p>
+                </div>
+                <button onclick="marcarNotifLeida('notif-1')" class="p-1.5 text-emerald-400 hover:bg-emerald-500/20 rounded-xl shrink-0" title="Marcar como leída">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Notificación No Leída 2 -->
+              <div id="notif-2" class="p-3 rounded-2xl bg-slate-800/90 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-sm transition-all">
+                <div class="space-y-0.5 cursor-pointer flex-1" onclick="ejecutarAccionModulo('examenes')">
+                  <p class="font-bold text-[11px] text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Mesa de Examen Modificada</p>
+                  <p class="text-[10px] text-slate-300">Tecnicatura en Enología - 1° Llamado</p>
+                </div>
+                <button onclick="marcarNotifLeida('notif-2')" class="p-1.5 text-emerald-400 hover:bg-emerald-500/20 rounded-xl shrink-0" title="Marcar como leída">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Notificación Ya Leída (Historial Diferenciado) -->
+              <div id="notif-3" class="p-3 rounded-2xl bg-slate-800/20 border border-slate-700/30 opacity-50 flex items-center justify-between gap-2">
+                <div class="space-y-0.5 flex-1">
+                  <p class="font-bold text-[11px] text-slate-400">Inasistencia Registrada</p>
+                  <p class="text-[10px] text-slate-500">Sede Central - Ayer 09:15</p>
+                </div>
+                <i data-lucide="check-check" class="w-4 h-4 text-slate-500"></i>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -306,7 +456,67 @@
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
 
-    // CONTROL DEL MENÚ LATERAL
+    // CONTROL DE NOTIFICACIONES LEÍDAS / NO LEÍDAS
+    let notifNoLeidas = 2;
+    function marcarNotifLeida(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('bg-slate-800/90', 'border-emerald-500/40');
+        el.classList.add('bg-slate-800/20', 'border-slate-700/30', 'opacity-50');
+        
+        const btn = el.querySelector('button');
+        if (btn) {
+          btn.outerHTML = `<i data-lucide="check-check" class="w-4 h-4 text-slate-500"></i>`;
+        }
+        if (window.lucide) lucide.createIcons();
+
+        notifNoLeidas = Math.max(0, notifNoLeidas - 1);
+        actualizarNotificacionesBadge();
+      }
+    }
+
+    function actualizarNotificacionesBadge() {
+      const badge = document.getElementById('badgeNotif');
+      const lblCant = document.getElementById('lblCantNotif');
+      
+      if (notifNoLeidas > 0) {
+        badge.textContent = notifNoLeidas;
+        badge.classList.remove('hidden');
+        lblCant.textContent = `${notifNoLeidas} sin leer`;
+      } else {
+        badge.classList.add('hidden');
+        lblCant.textContent = 'Todo al día';
+      }
+    }
+
+    // MODAL CAMBIAR CONTRASEÑA
+    function abrirModalPass() {
+      document.getElementById('modalChangePass').classList.remove('hidden');
+    }
+    function cerrarModalPass() {
+      document.getElementById('modalChangePass').classList.add('hidden');
+      document.getElementById('passActual').value = '';
+      document.getElementById('passNueva1').value = '';
+      document.getElementById('passNueva2').value = '';
+    }
+    function guardarNuevaContrasena() {
+      const pAct = document.getElementById('passActual').value;
+      const pN1 = document.getElementById('passNueva1').value;
+      const pN2 = document.getElementById('passNueva2').value;
+
+      if (!pAct || !pN1 || !pN2) {
+        alert('Por favor, completa todos los campos.');
+        return;
+      }
+      if (pN1 !== pN2) {
+        alert('Las nuevas contraseñas no coinciden.');
+        return;
+      }
+      alert('Contraseña actualizada con éxito.');
+      cerrarModalPass();
+    }
+
+    // CONTROL DE NAVEGACIÓN Y LOGIN
     function toggleMenuBoton() {
       if (window.innerWidth < 1024) {
         const sidebar = document.getElementById('sidebarNav');
@@ -332,14 +542,9 @@
     }
 
     function ejecutarAccionModulo(nombreModulo) {
-      if (window.innerWidth < 1024) {
-        cerrarMenuMobile();
-      }
-      if (nombreModulo === 'inicio') {
-        cargarInicio();
-      } else {
-        cargarModulo(nombreModulo);
-      }
+      if (window.innerWidth < 1024) cerrarMenuMobile();
+      if (nombreModulo === 'inicio') cargarInicio();
+      else cargarModulo(nombreModulo);
     }
 
     function toggleNotificaciones() {
@@ -347,11 +552,8 @@
     }
 
     function toggleFullScreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-      }
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else if (document.exitFullscreen) document.exitFullscreen();
     }
 
     function toggleTema() {
@@ -395,13 +597,20 @@
       const pass = document.getElementById('desktopPass').value;
 
       if (user && pass) {
-        // OCULTAR LOGIN Y MOSTRAR SIDEBAR Y HEADER
         document.getElementById('modalDesktopLogin').classList.add('hidden');
-        document.getElementById('sidebarNav').classList.remove('hidden');
-        document.getElementById('mainHeader').classList.remove('hidden');
+        
+        // REVELAR SIDEBAR Y HEADER
+        const sidebar = document.getElementById('sidebarNav');
+        const header = document.getElementById('mainHeader');
+        
+        sidebar.classList.remove('hidden');
+        sidebar.classList.add('flex');
+        header.classList.remove('hidden');
+        header.classList.add('flex');
+        
         document.getElementById('lblUserNombre').textContent = user === '100' ? 'Super Admin' : user;
         
-        // INICIALIZAR LA VISTA DE LA APP
+        actualizarNotificacionesBadge();
         inicializarRutaHash();
       } else {
         alert('Ingresa las credenciales');
@@ -410,8 +619,12 @@
 
     function cerrarSesion() {
       document.getElementById('modalDesktopLogin').classList.remove('hidden');
-      document.getElementById('sidebarNav').classList.add('hidden');
-      document.getElementById('mainHeader').classList.add('hidden');
+      const sidebar = document.getElementById('sidebarNav');
+      const header = document.getElementById('mainHeader');
+      sidebar.classList.add('hidden');
+      sidebar.classList.remove('flex');
+      header.classList.add('hidden');
+      header.classList.remove('flex');
     }
 
     document.addEventListener('DOMContentLoaded', () => {

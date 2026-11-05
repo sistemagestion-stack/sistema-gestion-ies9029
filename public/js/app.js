@@ -1,4 +1,4 @@
-// DATA ESTRUCTURADA DE SECCIONES CON SUS TRÁMITES Y ESTADOS (0/0)
+// DATA ESTRUCTURADA DE SECCIONES CON SUS SUBMÓDULOS (ACTUALIZADO SEGÚN ÚLTIMA PLANILLA)
 const SECCIONES_SISTEMA = {
   'docentes': {
     titulo: 'DOCENTES',
@@ -31,7 +31,8 @@ const SECCIONES_SISTEMA = {
     color: 'amber',
     tramites: '0/8 pendientes',
     submodulos: [
-      { id: 'carreras', titulo: 'Carreras', desc: 'Tecnicaturas y planes de estudio.', icono: 'layers' }
+      { id: 'practicas-profesionalizantes', titulo: 'Prácticas Profesionalizantes', desc: 'Gestión de convenio e informes de prácticas.', icono: 'building-2' },
+      { id: 'practicas-docentes', titulo: 'Prácticas Profesionales Docentes', desc: 'Residencias y observaciones en escuelas.', icono: 'user-check' }
     ]
   },
   'admin': {
@@ -46,8 +47,8 @@ const SECCIONES_SISTEMA = {
       { id: 'licencias', titulo: 'Licencias', desc: 'Trámites de licencias y adjuntos.', icono: 'file-text', pendientes: '1' },
       { id: 'calendario', titulo: 'Calendario Académico', desc: 'Recesos y fechas clave.', icono: 'calendar-days' },
       { id: 'resoluciones', titulo: 'Historial de Resoluciones', desc: 'Archivo de resoluciones IES.', icono: 'file-digit' },
-      { id: 'planillas-asistencia', titulo: 'Planillas de Asistencia', desc: 'Listados de asistencia y regularidad.', icono: 'check-square' },
-      { id: 'gestor-tareas', titulo: 'Gestor de Tareas', desc: 'Asignación de tareas a usuarios.', icono: 'list-todo' }
+      { id: 'planillas-asistencia', titulo: 'Planillas de Asistencia y Regularidad', desc: 'Generación de planillas.', icono: 'check-square' },
+      { id: 'gestor-tareas', titulo: 'Gestor de Tareas Institucional', desc: 'Asignación y check de tareas.', icono: 'list-todo' }
     ]
   },
   'titulos': {
@@ -81,7 +82,7 @@ const SECCIONES_SISTEMA = {
     color: 'emerald',
     tramites: '0/3 pendientes',
     submodulos: [
-      { id: 'comunicacion', titulo: 'Tablón de Anuncios', desc: 'Publicar novedades generales para sedes.', icono: 'megaphone' }
+      { id: 'comunicacion', titulo: 'Tablón de Anuncios', desc: 'Anuncios generales institucionales.', icono: 'megaphone' }
     ]
   },
   'config': {
@@ -92,9 +93,14 @@ const SECCIONES_SISTEMA = {
     submodulos: [
       { id: 'reclamos', titulo: 'Reclamos', desc: 'Tickets y soporte.', icono: 'alert-triangle' },
       { id: 'mejoras', titulo: 'Mejoras', desc: 'Sugerencias de funciones.', icono: 'sparkles' },
-      { id: 'usuarios', titulo: 'Usuarios y Roles', desc: 'Gestión de cuentas del sistema.', icono: 'users' },
+      { id: 'usuarios', titulo: 'Usuarios', desc: 'Gestión de usuarios del instituto.', icono: 'users' },
+      { id: 'roles', titulo: 'Roles', desc: 'Permisos del sistema.', icono: 'shield' },
+      { id: 'datos-institucionales', titulo: 'Datos Institucionales', desc: 'Logo, CUE, nombre del instituto.', icono: 'building' },
       { id: 'firmas', titulo: 'Firmas y Sellos', desc: 'Sellos digitales autorizados.', icono: 'pen-tool' },
-      { id: 'datos-personales', titulo: 'Mis Datos Personales', desc: 'Cambio de clave y perfil.', icono: 'user' }
+      { id: 'mi-plan', titulo: 'Mi Plan', desc: 'Estado del plan contratado.', icono: 'credit-card' },
+      { id: 'datos-personales', titulo: 'Mis Datos Personales', desc: 'Cambio de clave y datos de cuenta.', icono: 'user' },
+      { id: 'carreras-sedes', titulo: 'Carreras, Sedes', desc: 'Configurar sedes y ofertas académicas.', icono: 'git-fork' },
+      { id: 'admin-general', titulo: 'Administración General', desc: 'Acceso exclusivo Full Admin SaaS.', icono: 'shield-alert' }
     ]
   }
 };
@@ -103,7 +109,6 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
 
-  // SI SE SELECCIONA UNA CATEGORÍA DE SECCIÓN (ej. 'titulos', 'alumnos')
   if (SECCIONES_SISTEMA[nombreModulo]) {
     mostrarSeccionConTarjetas(nombreModulo);
     if (pushToHistory) history.pushState({ modulo: nombreModulo }, '', `#${nombreModulo}`);
@@ -120,7 +125,7 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
             <i data-lucide="wrench" class="w-8 h-8"></i>
           </div>
           <h2 class="text-lg font-black tracking-tight">Módulo en Desarrollo</h2>
-          <p class="text-xs text-slate-400">La sección <strong>"${nombreModulo.toUpperCase()}"</strong> está programada en la hoja de ruta del I.E.S. N° 9-029.</p>
+          <p class="text-xs text-slate-400">La sección <strong>"${nombreModulo.toUpperCase()}"</strong> está programada en la hoja de ruta del sistema.</p>
           <button onclick="cargarInicio()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-emerald-500 transition-colors">Volver al Inicio</button>
         </div>
       `;
@@ -157,7 +162,6 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
   }
 }
 
-// MOSTRAR PANTALLA DE TARJETAS POR SECCIÓN CON TRAMITES POR RESOLVER
 function mostrarSeccionConTarjetas(keySeccion) {
   const sec = SECCIONES_SISTEMA[keySeccion];
   const contenedor = document.getElementById('contenedor-modulo');
@@ -203,7 +207,6 @@ function mostrarSeccionConTarjetas(keySeccion) {
   if (window.lucide) lucide.createIcons();
 }
 
-// INICIO PRINCIPAL CON SECCIONES GENERALES
 function cargarInicio(pushToHistory = true) {
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
@@ -214,15 +217,13 @@ function cargarInicio(pushToHistory = true) {
       <div class="theme-card border p-6 rounded-3xl relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="space-y-2 max-w-2xl">
           <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Sistema Operativo Integrado</span>
-          <h2 class="text-xl font-black tracking-tight">Bienvenido al Sistema de Gestión I.E.S. N° 9-029</h2>
+          <h2 class="text-xl font-black tracking-tight">Bienvenido al Panel Institucional</h2>
           <p class="text-xs text-slate-400 leading-relaxed">Seleccione cualquiera de las áreas del sistema para administrar legajos, calendarios, mesas de examen y solicitudes.</p>
         </div>
-        <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-16 bg-white p-2 rounded-2xl shadow-md object-contain shrink-0" alt="Logo IES 9-029">
+        <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-16 bg-white p-2 rounded-2xl shadow-md object-contain shrink-0" alt="Logo">
       </div>
 
-      <!-- SECCIONES PRINCIPALES DEL SISTEMA CON SUS TRÁMITES -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
         <div onclick="cargarModulo('docentes')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
             <i data-lucide="briefcase" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
@@ -252,7 +253,7 @@ function cargarInicio(pushToHistory = true) {
           </div>
           <div>
             <h3 class="font-extrabold text-sm text-white">GESTIÓN ACADÉMICA</h3>
-            <p class="text-xs text-slate-400 mt-1">Planes de estudio y carreras.</p>
+            <p class="text-xs text-slate-400 mt-1">Prácticas profesionalizantes y docentes.</p>
           </div>
         </div>
 
@@ -263,7 +264,7 @@ function cargarInicio(pushToHistory = true) {
           </div>
           <div>
             <h3 class="font-extrabold text-sm text-white">GESTIÓN ADMINISTRATIVA</h3>
-            <p class="text-xs text-slate-400 mt-1">Mesas, inasistencias y licencias.</p>
+            <p class="text-xs text-slate-400 mt-1">Mesas, inasistencias, licencias y tareas.</p>
           </div>
         </div>
 
@@ -307,10 +308,9 @@ function cargarInicio(pushToHistory = true) {
           </div>
           <div>
             <h3 class="font-extrabold text-sm text-white">CONFIGURACIÓN</h3>
-            <p class="text-xs text-slate-400 mt-1">Usuarios, roles y datos personales.</p>
+            <p class="text-xs text-slate-400 mt-1">Datos institucionales, sedes y SaaS.</p>
           </div>
         </div>
-
       </div>
     </div>
   `;

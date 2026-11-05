@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Gestión Institucional - I.E.S. N° 9-029</title>
+  <title>Gestión Institucional - Multi-Tenant</title>
 
   <!-- LIBRERÍAS EXTERNAS -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -90,13 +90,13 @@
     </div>
   </div>
 
-  <!-- MODAL LOGIN (OCULTA TODO EL SISTEMA AL INICIAR) -->
+  <!-- MODAL LOGIN -->
   <div id="modalDesktopLogin" class="fixed inset-0 z-50 bg-[#0f172a] flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 text-slate-100 max-w-sm w-full p-6 sm:p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden my-auto">
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
       
-      <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-12 sm:h-14 mx-auto mb-4 bg-white p-2 rounded-xl shadow-md object-contain" alt="Logo IES 9-029">
-      <h2 class="text-base sm:text-lg font-black tracking-tight text-white">I.E.S. N° 9-029</h2>
+      <img id="imgLogoLogin" src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-12 sm:h-14 mx-auto mb-4 bg-white p-2 rounded-xl shadow-md object-contain" alt="Logo">
+      <h2 id="lblNombreInstLogin" class="text-base sm:text-lg font-black tracking-tight text-white">I.E.S. N° 9-029</h2>
       <p class="text-xs text-slate-400 mb-6">Sistema Integrado de Gestión Administrativa</p>
 
       <div class="space-y-4 text-left">
@@ -116,14 +116,14 @@
     </div>
   </div>
 
-  <!-- SIDEBAR LATERAL (INICIA TOTALMENTE OCULTO) -->
+  <!-- SIDEBAR LATERAL MENU -->
   <aside id="sidebarNav" class="hidden fixed lg:static inset-y-0 left-0 z-50 w-72 lg:w-64 -translate-x-full lg:translate-x-0 flex-col justify-between shrink-0 border-r shadow-2xl lg:shadow-none bg-[#0f172a]">
     <div class="overflow-y-auto">
       <div class="header-container p-4 border-b border-slate-800/50 flex items-center justify-between">
         <div class="flex items-center gap-3 min-w-0">
-          <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-7 bg-white rounded-lg p-1 shadow-sm shrink-0" alt="Logo">
+          <img id="imgLogoSidebar" src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-7 bg-white rounded-lg p-1 shadow-sm shrink-0" alt="Logo">
           <div class="sidebar-text truncate">
-            <span class="text-xs font-black tracking-wide block text-emerald-500 truncate">I.E.S. N° 9-029</span>
+            <span id="lblNombreInstSidebar" class="text-xs font-black tracking-wide block text-emerald-500 truncate">I.E.S. N° 9-029</span>
             <span class="text-[10px] text-slate-400 block font-medium truncate">Gestión Escolar</span>
           </div>
         </div>
@@ -191,7 +191,7 @@
           </div>
         </div>
 
-        <!-- GESTIÓN ACADÉMICA -->
+        <!-- GESTIÓN ACADÉMICA (ACTUALIZADA SE GÚN EXCEL) -->
         <div class="menu-group">
           <button onclick="toggleSubmenu('subAcademica', 'arrowAcademica')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
@@ -201,8 +201,11 @@
             <i data-lucide="chevron-down" id="arrowAcademica" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subAcademica" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('carreras')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
-              <i data-lucide="layers" class="w-3.5 h-3.5 shrink-0"></i> CARRERAS
+            <button onclick="ejecutarAccionModulo('practicas-profesionalizantes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 shrink-0"></i> PRÁCTICAS PROFESIONALIZANTES
+            </button>
+            <button onclick="ejecutarAccionModulo('practicas-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="user-check" class="w-3.5 h-3.5 shrink-0"></i> PRÁCTICAS PROFESIONALES DOCENTES
             </button>
           </div>
         </div>
@@ -232,13 +235,13 @@
             <button onclick="ejecutarAccionModulo('calendario')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0"></i> CALENDARIO ACADÉMICO
             </button>
-            <button onclick="ejecutarAccionModulo('resoluciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+            <button onclick="ejecutarAccionModulo('resoluciones')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="file-digit" class="w-3.5 h-3.5 shrink-0"></i> HISTORIAL DE RESOLUCIONES
             </button>
-            <button onclick="ejecutarAccionModulo('planillas-asistencia')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+            <button onclick="ejecutarAccionModulo('planillas-asistencia')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="check-square" class="w-3.5 h-3.5 shrink-0"></i> PLANILLAS DE ASISTENCIA Y REGULARIDAD
             </button>
-            <button onclick="ejecutarAccionModulo('gestor-tareas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+            <button onclick="ejecutarAccionModulo('gestor-tareas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="list-todo" class="w-3.5 h-3.5 shrink-0"></i> GESTOR DE TAREAS INSTITUCIONAL
             </button>
           </div>
@@ -266,10 +269,10 @@
             <button onclick="ejecutarAccionModulo('postitulos-titulos')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="scroll" class="w-3.5 h-3.5 shrink-0"></i> POSTÍTULOS
             </button>
-            <button onclick="ejecutarAccionModulo('readmision')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+            <button onclick="ejecutarAccionModulo('readmision')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="user-check" class="w-3.5 h-3.5 shrink-0"></i> RESOLUCIÓN DE READMISIÓN
             </button>
-            <button onclick="ejecutarAccionModulo('terminalidad')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+            <button onclick="ejecutarAccionModulo('terminalidad')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="check-circle-2" class="w-3.5 h-3.5 shrink-0"></i> RESOLUCIÓN DE TERMINALIDAD
             </button>
           </div>
@@ -298,12 +301,12 @@
         </div>
 
         <!-- COMUNICACIÓN -->
-        <button onclick="ejecutarAccionModulo('comunicacion')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors text-emerald-400">
-          <i data-lucide="megaphone" class="w-4 h-4 shrink-0"></i>
+        <button onclick="ejecutarAccionModulo('comunicacion')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
+          <i data-lucide="megaphone" class="w-4 h-4 text-emerald-400 shrink-0"></i>
           <span class="sidebar-text">COMUNICACIÓN</span>
         </button>
 
-        <!-- CONFIGURACIÓN -->
+        <!-- CONFIGURACIÓN (REORGANIZADA Y MULTI-TENANT) -->
         <div class="menu-group">
           <button onclick="toggleSubmenu('subConfig', 'arrowConfig')" class="nav-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-bold text-xs transition-colors">
             <span class="flex items-center gap-3 min-w-0">
@@ -322,19 +325,26 @@
             <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i> USUARIOS
             </button>
-            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+            <button onclick="ejecutarAccionModulo('roles')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="shield" class="w-3.5 h-3.5 shrink-0"></i> ROLES
+            </button>
+            <button onclick="ejecutarAccionModulo('datos-institucionales')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="building" class="w-3.5 h-3.5 shrink-0"></i> DATOS INSTITUCIONALES
             </button>
             <button onclick="ejecutarAccionModulo('firmas')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="pen-tool" class="w-3.5 h-3.5 shrink-0"></i> FIRMAS Y SELLOS
             </button>
-            <button onclick="ejecutarAccionModulo('usuarios')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 shrink-0"></i> MI PLAN
+            <button onclick="ejecutarAccionModulo('mi-plan')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="credit-card" class="w-3.5 h-3.5 shrink-0"></i> MI PLAN
             </button>
-            <!-- LLAVE UBICADA DENTRO DE MIS DATOS PERSONALES -->
-            <button onclick="abrirModalPass()" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center justify-between truncate text-amber-400">
-              <span class="flex items-center gap-2"><i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i> MIS DATOS PERSONALES</span>
-              <i data-lucide="key" class="w-3.5 h-3.5 shrink-0"></i>
+            <button onclick="ejecutarAccionModulo('datos-personales')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+              <i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i> MIS DATOS PERSONALES
+            </button>
+            <button onclick="ejecutarAccionModulo('carreras-sedes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-400">
+              <i data-lucide="git-fork" class="w-3.5 h-3.5 shrink-0"></i> CARRERAS, SEDES
+            </button>
+            <button onclick="ejecutarAccionModulo('admin-general')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-amber-400">
+              <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0"></i> ADMINISTRACIÓN GENERAL
             </button>
           </div>
         </div>
@@ -351,9 +361,15 @@
           <span id="lblUserRol" class="text-[9px] text-slate-400 font-bold uppercase block truncate">FULL ACCESS</span>
         </div>
       </div>
-      <button onclick="cerrarSesion()" class="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg transition-colors" title="Cerrar Sesión">
-        <i data-lucide="log-out" class="w-4 h-4"></i>
-      </button>
+      
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" onclick="abrirModalPass()" class="p-1.5 text-amber-400 hover:text-amber-300 hover:bg-slate-800/50 rounded-lg transition-colors" title="Cambiar Contraseña">
+          <i data-lucide="key" class="w-4 h-4"></i>
+        </button>
+        <button type="button" onclick="cerrarSesion()" class="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-slate-800/50 rounded-lg transition-colors" title="Cerrar Sesión">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
+      </div>
     </div>
   </aside>
 
@@ -379,7 +395,7 @@
           <i data-lucide="maximize" class="w-4 h-4"></i>
         </button>
 
-        <!-- NOTIFICACIONES CON HISTORIAL CLARO -->
+        <!-- NOTIFICACIONES -->
         <div class="relative">
           <button type="button" onclick="toggleNotificaciones()" class="p-2 hover:bg-slate-800/20 text-amber-400 rounded-xl relative transition-colors cursor-pointer">
             <i data-lucide="bell" class="w-4 h-4"></i>
@@ -394,7 +410,6 @@
             </div>
 
             <div id="listaNotificaciones" class="space-y-2 max-h-64 overflow-y-auto pr-1">
-              <!-- Notificación No Leída 1 -->
               <div id="notif-1" class="p-3 rounded-2xl bg-slate-800/90 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-sm transition-all">
                 <div class="space-y-0.5 cursor-pointer flex-1" onclick="ejecutarAccionModulo('licencias')">
                   <p class="font-bold text-[11px] text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Nueva Solicitud de Licencia</p>
@@ -405,7 +420,6 @@
                 </button>
               </div>
 
-              <!-- Notificación No Leída 2 -->
               <div id="notif-2" class="p-3 rounded-2xl bg-slate-800/90 border border-emerald-500/40 flex items-center justify-between gap-2 shadow-sm transition-all">
                 <div class="space-y-0.5 cursor-pointer flex-1" onclick="ejecutarAccionModulo('examenes')">
                   <p class="font-bold text-[11px] text-white flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Mesa de Examen Modificada</p>
@@ -414,15 +428,6 @@
                 <button onclick="marcarNotifLeida('notif-2')" class="p-1.5 text-emerald-400 hover:bg-emerald-500/20 rounded-xl shrink-0" title="Marcar como leída">
                   <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
-              </div>
-
-              <!-- Notificación Ya Leída (Historial Diferenciado) -->
-              <div id="notif-3" class="p-3 rounded-2xl bg-slate-800/20 border border-slate-700/30 opacity-50 flex items-center justify-between gap-2">
-                <div class="space-y-0.5 flex-1">
-                  <p class="font-bold text-[11px] text-slate-400">Inasistencia Registrada</p>
-                  <p class="text-[10px] text-slate-500">Sede Central - Ayer 09:15</p>
-                </div>
-                <i data-lucide="check-check" class="w-4 h-4 text-slate-500"></i>
               </div>
             </div>
           </div>
@@ -456,7 +461,6 @@
     setInterval(actualizarReloj, 1000);
     actualizarReloj();
 
-    // CONTROL DE NOTIFICACIONES LEÍDAS / NO LEÍDAS
     let notifNoLeidas = 2;
     function marcarNotifLeida(id) {
       const el = document.getElementById(id);
@@ -489,7 +493,6 @@
       }
     }
 
-    // MODAL CAMBIAR CONTRASEÑA
     function abrirModalPass() {
       document.getElementById('modalChangePass').classList.remove('hidden');
     }
@@ -516,7 +519,6 @@
       cerrarModalPass();
     }
 
-    // CONTROL DE NAVEGACIÓN Y LOGIN
     function toggleMenuBoton() {
       if (window.innerWidth < 1024) {
         const sidebar = document.getElementById('sidebarNav');
@@ -599,7 +601,6 @@
       if (user && pass) {
         document.getElementById('modalDesktopLogin').classList.add('hidden');
         
-        // REVELAR SIDEBAR Y HEADER
         const sidebar = document.getElementById('sidebarNav');
         const header = document.getElementById('mainHeader');
         

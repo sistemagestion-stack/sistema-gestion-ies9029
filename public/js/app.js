@@ -1,4 +1,4 @@
-// DATA ESTRUCTURADA DE SECCIONES CON SUS SUBMÓDULOS (ACTUALIZADO SEGÚN ÚLTIMA PLANILLA)
+// DATA ESTRUCTURADA DE SECCIONES CON SUS SUBMÓDULOS
 const SECCIONES_SISTEMA = {
   'docentes': {
     titulo: 'DOCENTES',
@@ -121,11 +121,11 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
     if (!resHtml.ok) {
       contenedor.innerHTML = `
         <div class="theme-card border p-8 rounded-3xl text-center max-w-xl mx-auto my-12 shadow-xl space-y-4">
-          <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center mx-auto">
+          <div class="w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-2xl flex items-center justify-center mx-auto">
             <i data-lucide="wrench" class="w-8 h-8"></i>
           </div>
-          <h2 class="text-lg font-black tracking-tight">Módulo en Desarrollo</h2>
-          <p class="text-xs text-slate-400">La sección <strong>"${nombreModulo.toUpperCase()}"</strong> está programada en la hoja de ruta del sistema.</p>
+          <h2 class="text-lg font-black tracking-tight dynamic-text-main">Módulo en Desarrollo</h2>
+          <p class="text-xs dynamic-text-sub">La sección <strong>"${nombreModulo.toUpperCase()}"</strong> está programada en la hoja de ruta del sistema.</p>
           <button onclick="cargarInicio()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-emerald-500 transition-colors">Volver al Inicio</button>
         </div>
       `;
@@ -171,12 +171,12 @@ function mostrarSeccionConTarjetas(keySeccion) {
   let htmlTarjetas = sec.submodulos.map(sub => `
     <div onclick="cargarModulo('${sub.id}')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group relative overflow-hidden">
       <div class="flex items-center justify-between">
-        <i data-lucide="${sub.icono}" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-        ${sub.pendientes ? `<span class="px-2 py-0.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-black rounded-full">${sub.pendientes} pendientes</span>` : ''}
+        <i data-lucide="${sub.icono}" class="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform"></i>
+        ${sub.pendientes ? `<span class="px-2.5 py-0.5 bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-[10px] font-black rounded-full">${sub.pendientes} pendientes</span>` : ''}
       </div>
       <div>
-        <h3 class="font-extrabold text-sm text-white group-hover:text-emerald-400 transition-colors">${sub.titulo}</h3>
-        <p class="text-xs text-slate-400 mt-1">${sub.desc}</p>
+        <h3 class="font-extrabold text-sm dynamic-text-main group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${sub.titulo}</h3>
+        <p class="text-xs dynamic-text-sub mt-1">${sub.desc}</p>
       </div>
     </div>
   `).join('');
@@ -186,14 +186,14 @@ function mostrarSeccionConTarjetas(keySeccion) {
       <div class="theme-card border p-6 rounded-3xl flex items-center justify-between gap-4">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
-            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
+            <span class="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5">
               <i data-lucide="${sec.icono}" class="w-3.5 h-3.5"></i> ${sec.titulo}
             </span>
           </div>
-          <h2 class="text-xl font-black text-white">Submódulos y Trámites de ${sec.titulo}</h2>
+          <h2 class="text-xl font-black dynamic-text-main">Submódulos y Trámites de ${sec.titulo}</h2>
         </div>
         <div class="text-right shrink-0">
-          <span class="text-xs font-black text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-xl border border-amber-500/20 block">
+          <span class="text-xs font-black text-amber-700 dark:text-amber-400 bg-amber-500/15 px-3 py-1.5 rounded-xl border border-amber-500/30 block">
             Trámites: ${sec.tramites}
           </span>
         </div>
@@ -216,9 +216,9 @@ function cargarInicio(pushToHistory = true) {
     <div class="space-y-6">
       <div class="theme-card border p-6 rounded-3xl relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="space-y-2 max-w-2xl">
-          <span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Sistema Operativo Integrado</span>
-          <h2 class="text-xl font-black tracking-tight">Bienvenido al Panel Institucional</h2>
-          <p class="text-xs text-slate-400 leading-relaxed">Seleccione cualquiera de las áreas del sistema para administrar legajos, calendarios, mesas de examen y solicitudes.</p>
+          <span class="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-full text-[10px] font-extrabold uppercase tracking-wider">Sistema Operativo Integrado</span>
+          <h2 class="text-xl font-black tracking-tight dynamic-text-main">Bienvenido al Panel Institucional</h2>
+          <p class="text-xs dynamic-text-sub leading-relaxed">Seleccione cualquiera de las áreas del sistema para administrar legajos, calendarios, mesas de examen y solicitudes.</p>
         </div>
         <img src="https://i0.wp.com/www.ies9029.edu.ar/wp-content/uploads/Nuevo-Logo-9029.png?ssl=1" class="h-16 bg-white p-2 rounded-2xl shadow-md object-contain shrink-0" alt="Logo">
       </div>
@@ -226,89 +226,89 @@ function cargarInicio(pushToHistory = true) {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div onclick="cargarModulo('docentes')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="briefcase" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">3 trámites</span>
+            <i data-lucide="briefcase" class="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">3 trámites</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">DOCENTES</h3>
-            <p class="text-xs text-slate-400 mt-1">POF, legajos, certificaciones y horarios.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">DOCENTES</h3>
+            <p class="text-xs dynamic-text-sub mt-1">POF, legajos, certificaciones y horarios.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('alumnos')" class="theme-card border p-5 rounded-2xl hover:border-sky-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="graduation-cap" class="w-6 h-6 text-sky-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">5 trámites</span>
+            <i data-lucide="graduation-cap" class="w-6 h-6 text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">5 trámites</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">ALUMNOS</h3>
-            <p class="text-xs text-slate-400 mt-1">Legajos, certificaciones y equivalencias.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">ALUMNOS</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Legajos, certificaciones y equivalencias.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('academica')" class="theme-card border p-5 rounded-2xl hover:border-amber-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="book-open" class="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Al día</span>
+            <i data-lucide="book-open" class="w-6 h-6 text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">Al día</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">GESTIÓN ACADÉMICA</h3>
-            <p class="text-xs text-slate-400 mt-1">Prácticas profesionalizantes y docentes.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">GESTIÓN ACADÉMICA</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Prácticas profesionalizantes y docentes.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('admin')" class="theme-card border p-5 rounded-2xl hover:border-purple-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="clipboard-list" class="w-6 h-6 text-purple-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">4 trámites</span>
+            <i data-lucide="clipboard-list" class="w-6 h-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">4 trámites</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">GESTIÓN ADMINISTRATIVA</h3>
-            <p class="text-xs text-slate-400 mt-1">Mesas, inasistencias, licencias y tareas.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">GESTIÓN ADMINISTRATIVA</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Mesas, inasistencias, licencias y tareas.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('titulos')" class="theme-card border p-5 rounded-2xl hover:border-indigo-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="award" class="w-6 h-6 text-indigo-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">6 trámites</span>
+            <i data-lucide="award" class="w-6 h-6 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">6 trámites</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">TÍTULOS</h3>
-            <p class="text-xs text-slate-400 mt-1">Analíticos, terminalidad y readmisión.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">TÍTULOS</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Analíticos, terminalidad y readmisión.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('formacion')" class="theme-card border p-5 rounded-2xl hover:border-rose-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="school" class="w-6 h-6 text-rose-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">1 trámite</span>
+            <i data-lucide="school" class="w-6 h-6 text-rose-600 dark:text-rose-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">1 trámite</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">FORMACIÓN CONTINUA</h3>
-            <p class="text-xs text-slate-400 mt-1">Cursos, postítulos y pagos.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">FORMACIÓN CONTINUA</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Cursos, postítulos y pagos.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('comunicacion')" class="theme-card border p-5 rounded-2xl hover:border-emerald-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="megaphone" class="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Al día</span>
+            <i data-lucide="megaphone" class="w-6 h-6 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">Al día</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">COMUNICACIÓN</h3>
-            <p class="text-xs text-slate-400 mt-1">Tablón de anuncios institucionales.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">COMUNICACIÓN</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Tablón de anuncios institucionales.</p>
           </div>
         </div>
 
         <div onclick="cargarModulo('config')" class="theme-card border p-5 rounded-2xl hover:border-teal-500 cursor-pointer transition-all space-y-3 group">
           <div class="flex items-center justify-between">
-            <i data-lucide="settings" class="w-6 h-6 text-teal-400 group-hover:scale-110 transition-transform"></i>
-            <span class="text-[9px] font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-full">Configuración</span>
+            <i data-lucide="settings" class="w-6 h-6 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform"></i>
+            <span class="text-[10px] dynamic-badge-neutral px-2.5 py-1 rounded-full">Configuración</span>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-white">CONFIGURACIÓN</h3>
-            <p class="text-xs text-slate-400 mt-1">Datos institucionales, sedes y SaaS.</p>
+            <h3 class="font-extrabold text-sm dynamic-text-main">CONFIGURACIÓN</h3>
+            <p class="text-xs dynamic-text-sub mt-1">Datos institucionales, sedes y SaaS.</p>
           </div>
         </div>
       </div>

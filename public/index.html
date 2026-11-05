@@ -168,13 +168,13 @@
             <i data-lucide="chevron-down" id="arrowDocentes" class="w-3.5 h-3.5 menu-arrow transition-transform duration-200"></i>
           </button>
           <div id="subDocentes" class="submenu-container hidden pl-6 pr-1 py-1 space-y-1">
-            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+            <button onclick="ejecutarAccionModulo('pof')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 shrink-0"></i> POF
             </button>
             <button onclick="ejecutarAccionModulo('certificaciones-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="award" class="w-3.5 h-3.5 shrink-0"></i> CERTIFICACIONES DOCENTES
             </button>
-            <button onclick="ejecutarAccionModulo('docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
+            <button onclick="ejecutarAccionModulo('legajos-docentes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate">
               <i data-lucide="folder-user" class="w-3.5 h-3.5 shrink-0"></i> LEGAJOS DOCENTES
             </button>
             <button onclick="ejecutarAccionModulo('horarios-cursado')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-600 dark:text-emerald-400">
@@ -363,7 +363,7 @@
             <button onclick="ejecutarAccionModulo('carreras-sedes')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-emerald-600 dark:text-emerald-400">
               <i data-lucide="git-fork" class="w-3.5 h-3.5 shrink-0"></i> CARRERAS, SEDES
             </button>
-            <button onclick="ejecutarAccionModulo('admin-general')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-amber-600 dark:text-amber-400">
+            <button onclick="ejecutarAccionModulo('super-admin')" class="subnav-btn w-full text-left py-1.5 px-2 rounded-lg text-[11px] font-semibold flex items-center gap-2 truncate text-amber-600 dark:text-amber-400">
               <i data-lucide="shield-alert" class="w-3.5 h-3.5 shrink-0"></i> ADMINISTRACIÓN GENERAL
             </button>
           </div>
@@ -372,7 +372,7 @@
       </nav>
     </div>
 
-    <!-- PIE DEL SIDEBAR (ADAPTADO A CADA TEMA) -->
+    <!-- PIE DEL SIDEBAR -->
     <div class="sidebar-footer p-3 border-t flex justify-between items-center">
       <div class="min-w-0 flex items-center gap-2">
         <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-black text-white text-[11px] shrink-0">SA</div>
@@ -422,7 +422,6 @@
             <span id="badgeNotif" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-pulse">2</span>
           </button>
 
-          <!-- POPOVER NOTIFICACIONES -->
           <div id="popoverNotif" class="hidden absolute right-0 mt-3 w-80 theme-card border p-4 rounded-2xl shadow-2xl text-xs z-50 space-y-3">
             <div class="flex items-center justify-between border-b pb-2 border-slate-200 dark:border-slate-700/40">
               <p class="font-black text-xs text-emerald-600 dark:text-emerald-500">Historial de Notificaciones</p>
@@ -486,13 +485,9 @@
       const el = document.getElementById(id);
       if (el) {
         el.classList.add('opacity-50');
-        
         const btn = el.querySelector('button');
-        if (btn) {
-          btn.outerHTML = `<i data-lucide="check-check" class="w-4 h-4 text-slate-400"></i>`;
-        }
+        if (btn) btn.outerHTML = `<i data-lucide="check-check" class="w-4 h-4 text-slate-400"></i>`;
         if (window.lucide) lucide.createIcons();
-
         notifNoLeidas = Math.max(0, notifNoLeidas - 1);
         actualizarNotificacionesBadge();
       }
@@ -501,7 +496,6 @@
     function actualizarNotificacionesBadge() {
       const badge = document.getElementById('badgeNotif');
       const lblCant = document.getElementById('lblCantNotif');
-      
       if (notifNoLeidas > 0) {
         badge.textContent = notifNoLeidas;
         badge.classList.remove('hidden');

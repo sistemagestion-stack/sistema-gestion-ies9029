@@ -1,0 +1,315 @@
+<div class="space-y-6">
+  <!-- CABECERA PRINCIPAL -->
+  <div class="theme-card border p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="space-y-1">
+      <span class="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[10px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 w-fit">
+        <i data-lucide="folder-user" class="w-3.5 h-3.5"></i> Gestión Escolar
+      </span>
+      <h2 class="text-xl font-black dynamic-text-main">Legajos y Padrón Docente</h2>
+      <p class="text-xs dynamic-text-sub">Administra la nómina de profesores, emite reportes de faltantes y gestiona reclamos.</p>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-2">
+      <!-- BOTÓN REPORTE DE FALTANTES -->
+      <button onclick="generarReporteFaltantes()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer">
+        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Reporte de Faltantes
+      </button>
+
+      <button onclick="abrirModalSolicitudesForms()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 transition-all cursor-pointer relative">
+        <i data-lucide="file-check" class="w-4 h-4"></i> Respuestas Forms
+        <span id="badgeFormsPendientes" class="bg-rose-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center animate-pulse">0</span>
+      </button>
+
+      <button onclick="abrirModalDocente()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer">
+        <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Docente
+      </button>
+    </div>
+  </div>
+
+  <!-- BUSCADOR Y TABLA CON SELECCIÓN LIBRE -->
+  <div class="theme-card border p-5 rounded-3xl space-y-4">
+    <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 rounded-xl px-3 py-2">
+      <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+      <input type="text" id="busquedaDocente" onkeyup="filtrarDocentes()" placeholder="Buscar por Nombre, Apellido, DNI, CUIL..." class="bg-transparent text-xs w-full outline-none dynamic-text-main select-text">
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs select-text">
+        <thead>
+          <tr class="border-b border-slate-200 dark:border-slate-700/60 text-[11px] font-extrabold uppercase text-slate-400">
+            <th class="py-3 px-3">Docente / DNI</th>
+            <th class="py-3 px-3">CUIL</th>
+            <th class="py-3 px-3">Contacto</th>
+            <th class="py-3 px-3">Estado del Legajo</th>
+            <th class="py-3 px-3 text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaDocentesBody" class="divide-y divide-slate-200 dark:divide-slate-800/40 font-medium">
+          <!-- Carga dinámica -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER LEGAJO COMPLETO -->
+<div id="modalVerLegajo" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-700/70 max-w-4xl w-full p-6 rounded-3xl shadow-2xl relative space-y-5 my-auto max-h-[90vh] overflow-y-auto text-slate-100 select-text">
+    <div class="flex items-center justify-between border-b pb-3 border-slate-800">
+      <div class="flex items-center gap-2">
+        <i data-lucide="file-badge" class="w-5 h-5 text-emerald-400"></i>
+        <h3 id="legajoModalTitulo" class="font-black text-base text-white">Legajo Digital Docente</h3>
+      </div>
+      <button onclick="cerrarModalVerLegajo()" class="text-slate-400 hover:text-rose-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase block">Docente</span>
+        <p id="legajoNombreCompleto" class="font-extrabold text-sm text-white">-</p>
+        <p id="legajoDniCuil" class="text-[11px] text-emerald-400 font-semibold mt-0.5">-</p>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase block">Contacto</span>
+        <p id="legajoEmail" class="font-bold text-xs text-sky-400 select-all">-</p>
+        <p id="legajoTelefono" class="text-xs text-slate-300 select-all mt-0.5">-</p>
+      </div>
+
+      <div>
+        <span class="text-[10px] font-bold text-slate-400 uppercase block">Almacenamiento Raíz</span>
+        <div id="legajoLinkCarpeta" class="mt-1"></div>
+      </div>
+    </div>
+
+    <div id="contenedorLegajoTitulosPostitulos" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+      <div id="boxLegajoTitulos" class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl space-y-2 hidden">
+        <h4 class="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i> Títulos de Grado / Base
+        </h4>
+        <div id="listaLegajoTitulos" class="space-y-1.5 text-xs text-slate-200"></div>
+      </div>
+
+      <div id="boxLegajoPostitulos" class="bg-slate-800/60 border border-slate-700/60 p-4 rounded-2xl space-y-2 hidden">
+        <h4 class="text-xs font-black uppercase text-indigo-400 flex items-center gap-1.5">
+          <i data-lucide="award" class="w-4 h-4"></i> Postítulos y Posgrados
+        </h4>
+        <div id="listaLegajoPostitulos" class="space-y-1.5 text-xs text-slate-200"></div>
+      </div>
+    </div>
+
+    <div class="space-y-3">
+      <h4 class="text-xs font-black uppercase text-slate-400 tracking-wider flex items-center gap-2">
+        <i data-lucide="folder-open" class="w-4 h-4 text-emerald-400"></i> Documentación Adjunta Registrada
+      </h4>
+
+      <div id="gridDocumentosLegajo" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs"></div>
+    </div>
+
+    <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+      <button id="btnReclamarLegajo" onclick="abrirModalReclamoDocente()" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer">
+        <i data-lucide="send" class="w-4 h-4"></i> Reclamar Documentación Faltante
+      </button>
+
+      <button onclick="cerrarModalVerLegajo()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE SELECCIÓN DE DOCUMENTOS A RECLAMAR -->
+<div id="modalReclamoDocente" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-700 max-w-2xl w-full p-6 rounded-3xl shadow-2xl relative space-y-4 my-auto max-h-[90vh] overflow-y-auto text-slate-100 select-text">
+    <div class="flex items-center justify-between border-b pb-3 border-slate-800">
+      <div class="flex items-center gap-2">
+        <i data-lucide="mail-warning" class="w-5 h-5 text-rose-400"></i>
+        <h3 class="font-extrabold text-sm text-rose-400">Seleccionar Documentación a Reclamar</h3>
+      </div>
+      <button onclick="cerrarModalReclamoDocente()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+
+    <p class="text-xs text-slate-300">Selecciona los elementos a solicitar. Se compilarán en un único correo para el docente.</p>
+
+    <div id="listaCheckReclamo" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs"></div>
+
+    <div>
+      <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Observaciones Generales / Comentario Adicional</label>
+      <textarea id="txtObservacionReclamo" rows="3" placeholder="Ej. Recuerde adjuntar copias autenticadas..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-rose-500"></textarea>
+    </div>
+
+    <div class="pt-3 flex gap-2 border-t border-slate-800">
+      <button type="button" onclick="cerrarModalReclamoDocente()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs">Cancelar</button>
+      <button type="button" onclick="confirmarEnviarReclamoMail()" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl text-xs shadow-md flex items-center justify-center gap-2">
+        <i data-lucide="mail" class="w-4 h-4"></i> Guardar y Enviar Mail
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VISUALIZADOR DEL REPORTE DE FALTANTES -->
+<div id="modalReporteFaltantes" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-700/70 max-w-4xl w-full p-6 rounded-3xl shadow-2xl relative space-y-4 my-auto max-h-[90vh] overflow-y-auto text-slate-100 select-text">
+    <div class="flex items-center justify-between border-b pb-3 border-slate-800">
+      <div class="flex items-center gap-2">
+        <i data-lucide="file-spreadsheet" class="w-5 h-5 text-amber-400"></i>
+        <h3 class="font-black text-base text-white">Reporte de Legajos Incompletos</h3>
+      </div>
+      <button onclick="cerrarModalReporteFaltantes()" class="text-slate-400 hover:text-rose-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400 font-extrabold uppercase text-[10px]">
+            <th class="py-2.5 px-3">Docente</th>
+            <th class="py-2.5 px-3">Contacto</th>
+            <th class="py-2.5 px-3">Documentos Faltantes</th>
+            <th class="py-2.5 px-3 text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaReporteFaltantesBody" class="divide-y divide-slate-800 font-medium"></tbody>
+      </table>
+    </div>
+
+    <div class="pt-3 border-t border-slate-800 flex justify-end">
+      <button onclick="cerrarModalReporteFaltantes()" class="px-5 py-2.5 bg-slate-800 text-slate-200 font-bold rounded-xl text-xs">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REVISAR RESPUESTAS DE GOOGLE FORMS -->
+<div id="modalSolicitudesForms" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-700/70 max-w-4xl w-full p-6 rounded-3xl shadow-2xl relative space-y-5 my-auto max-h-[90vh] overflow-y-auto text-slate-100 select-text">
+    <div class="flex items-center justify-between border-b pb-3 border-slate-800">
+      <div class="flex items-center gap-2">
+        <i data-lucide="clipboard-check" class="w-5 h-5 text-amber-400"></i>
+        <h3 class="font-black text-base text-white">Sesión Única de Validación (Google Forms)</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="simularNuevaSolicitudForm()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Simular Envío Form
+        </button>
+        <button onclick="cerrarModalSolicitudesForms()" class="text-slate-400 hover:text-rose-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
+      <label class="text-xs font-bold text-slate-400 uppercase shrink-0">Seleccionar Formulario:</label>
+      <select id="selectSolicitudesForms" onchange="cargarDetalleSesionForm(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl p-2 text-xs font-bold outline-none"></select>
+    </div>
+
+    <div id="contenedorAuditoriaSesion" class="space-y-4"></div>
+  </div>
+</div>
+
+<!-- MODAL CREAR / EDITAR DOCENTE -->
+<div id="modalDocente" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-slate-900 border border-slate-700/70 max-w-3xl w-full p-6 rounded-3xl shadow-2xl relative space-y-4 my-auto max-h-[90vh] overflow-y-auto text-slate-100 select-text">
+    <div class="flex items-center justify-between border-b pb-3 border-slate-800">
+      <h3 id="modalDocenteTitulo" class="font-extrabold text-sm flex items-center gap-2 text-emerald-400">
+        <i data-lucide="user-check" class="w-4 h-4"></i> Registrar Legajo Docente
+      </h3>
+      <button onclick="cerrarModalDocente()" class="text-slate-400 hover:text-rose-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </div>
+
+    <form id="formDocente" onsubmit="guardarDocente(event)" class="space-y-4">
+      <input type="hidden" id="docenteId">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Nombre</label>
+          <input type="text" id="docNombre" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Apellido</label>
+          <input type="text" id="docApellido" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">DNI</label>
+          <input type="text" id="docDni" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">CUIL</label>
+          <input type="text" id="docCuil" placeholder="20-XXXXXXXX-X" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Correo Electrónico</label>
+          <input type="email" id="docEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Teléfono</label>
+          <input type="text" id="docTelefono" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-[10px] font-bold uppercase text-emerald-400 mb-1">Estado de Planta</label>
+          <select id="docEstado" class="w-full bg-slate-800 border border-emerald-500/50 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500 font-bold">
+            <option value="Activo">Activo</option>
+            <option value="Licencia">Licencia</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Baja">Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-800 pt-3">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-bold uppercase text-amber-400">Títulos de Grado</label>
+            <button type="button" onclick="agregarCampoTitulo()" class="text-[10px] font-bold text-amber-400 hover:underline flex items-center gap-1">+ Agregar Título</button>
+          </div>
+          <div id="containerTitulosInputs" class="space-y-2"></div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-[10px] font-bold uppercase text-indigo-400">Postítulos y Posgrados</label>
+            <button type="button" onclick="agregarCampoPostitulo()" class="text-[10px] font-bold text-indigo-400 hover:underline flex items-center gap-1">+ Agregar Postítulo</button>
+          </div>
+          <div id="containerPostitulosInputs" class="space-y-2"></div>
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Link Carpeta Drive Raíz del Legajo</label>
+          <input type="url" id="docLinkLegajo" placeholder="https://drive.google.com/drive/folders/..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white outline-none focus:border-emerald-500">
+        </div>
+      </div>
+
+      <div class="space-y-3 border-t border-slate-800 pt-3">
+        <h4 class="text-xs font-black uppercase text-emerald-400">URLs de Archivos Digitalizados (001 al 011)</h4>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">001. CV (URL - <span class="text-amber-400">Opcional</span>)</label><input type="text" id="doc_001" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">002. DNI (URL)</label><input type="text" id="doc_002" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">003. Constancia CUIL (URL)</label><input type="text" id="doc_003" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-[10px] font-bold text-slate-400">004. Títulos y Analíticos (URLs)</label>
+              <button type="button" onclick="agregarCampoUrlTitulo()" class="text-[9px] font-bold text-emerald-400 hover:underline">+ Agregar URL</button>
+            </div>
+            <div id="containerUrlsTitulos" class="space-y-1"></div>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-[10px] font-bold text-slate-400">005. Postítulos (URLs)</label>
+              <button type="button" onclick="agregarCampoUrlPostitulo()" class="text-[9px] font-bold text-emerald-400 hover:underline">+ Agregar URL</button>
+            </div>
+            <div id="containerUrlsPostitulos" class="space-y-1"></div>
+          </div>
+
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">006. Psicofísico (Vigencia / URL)</label><input type="text" id="doc_006" placeholder="Apto Vigente 2027 / https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">007. Antecedentes Penales (URL)</label><input type="text" id="doc_007" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">008. Certificado Ley Micaela (URL)</label><input type="text" id="doc_008" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">009. Resolución Titularización (URL)</label><input type="text" id="doc_009" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div><label class="block text-[10px] font-bold text-slate-400 mb-0.5">010. Res. Cargo Gestión (URL)</label><input type="text" id="doc_010" placeholder="https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></div>
+          <div class="sm:col-span-2"><label class="block text-[10px] font-bold text-amber-400 mb-0.5">011. MEMO (Exclusivo Celadores / Personal No Docente)</label><input type="text" id="doc_011" placeholder="N° Memo / URL..." class="w-full bg-slate-800 border border-amber-500/40 rounded-lg p-2 text-xs text-white"></div>
+        </div>
+      </div>
+
+      <div class="pt-3 flex gap-2 border-t border-slate-800">
+        <button type="button" onclick="cerrarModalDocente()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 font-bold rounded-xl text-xs">Cancelar</button>
+        <button type="submit" class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs shadow-md">Guardar Legajo</button>
+      </div>
+    </form>
+  </div>
+</div>

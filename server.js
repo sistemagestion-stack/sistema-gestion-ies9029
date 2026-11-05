@@ -2,11 +2,11 @@ const express = require('express');
 const path = require('path');
 const db = require('./database');
 
-// Importar rutas de módulos
+// Importar rutas de módulos existentes
 const carrerasRoutes = require('./routes/carreras.routes');
 const examenesRoutes = require('./routes/examenes.routes');
 const inasistenciasRoutes = require('./routes/inasistencias.routes');
-const licenciasRoutes = require('./routes/licencias.routes'); // <-- REGISTRADO MÓDULO LICENCIAS
+const licenciasRoutes = require('./routes/licencias.routes');
 
 const app = express();
 const PORT = 3000;
@@ -22,7 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/carreras', carrerasRoutes);
 app.use('/api/examenes', examenesRoutes);
 app.use('/api/inasistencias', inasistenciasRoutes);
-app.use('/api/licencias', licenciasRoutes); // <-- ENLAZADO LICENCIAS
+app.use('/api/licencias', licenciasRoutes);
+
+// Servir la vista HTML de Super Admin de forma directa
+app.get('/modulos/super-admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/js/modulos/super-admin.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`=================================`);

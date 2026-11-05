@@ -1,3 +1,34 @@
+// SISTEMA DE NOTIFICACIONES GLOBALES PARA LA CAMPANA SUPERIOR
+window.notificacionesGlobales = [];
+
+window.registrarNotificacionGlobal = function(notif) {
+  const idx = window.notificacionesGlobales.findIndex(n => n.id === notif.id);
+  if (idx !== -1) {
+    if (notif.cant === 0) {
+      window.notificacionesGlobales.splice(idx, 1);
+    } else {
+      window.notificacionesGlobales[idx] = notif;
+    }
+  } else if (notif.cant > 0) {
+    window.notificacionesGlobales.push(notif);
+  }
+  actualizarCampanaHeader();
+};
+
+function actualizarCampanaHeader() {
+  const badgeCounter = document.getElementById('notifBadgeCount') || document.querySelector('.topbar-notif-badge');
+  const totalNotifs = window.notificacionesGlobales.reduce((acc, curr) => acc + (curr.cant || 1), 0);
+
+  if (badgeCounter) {
+    badgeCounter.textContent = totalNotifs;
+    if (totalNotifs > 0) {
+      badgeCounter.classList.remove('hidden');
+    } else {
+      badgeCounter.classList.add('hidden');
+    }
+  }
+}
+
 // DATA ESTRUCTURADA DE SECCIONES CON SUS SUBMÓDULOS
 const SECCIONES_SISTEMA = {
   'docentes': {
@@ -8,7 +39,7 @@ const SECCIONES_SISTEMA = {
     submodulos: [
       { id: 'docentes', titulo: 'POF', desc: 'Planta Orgánico Funcional.', icono: 'file-spreadsheet' },
       { id: 'certificaciones-docentes', titulo: 'Certificaciones Docentes', desc: 'Emisión de cert. de servicios.', icono: 'award', pendientes: '2' },
-      { id: 'docentes', titulo: 'Legajos Docentes', desc: 'Legajos digitales de profesores.', icono: 'folder-user' },
+      { id: 'legajos-docentes', titulo: 'Legajos Docentes', desc: 'Legajos digitales de profesores.', icono: 'folder-user' },
       { id: 'horarios-cursado', titulo: 'Horarios de Cursado', desc: 'Grillas horarias y comisiones.', icono: 'clock', pendientes: '1' }
     ]
   },
@@ -100,12 +131,41 @@ const SECCIONES_SISTEMA = {
       { id: 'mi-plan', titulo: 'Mi Plan', desc: 'Estado del plan contratado.', icono: 'credit-card' },
       { id: 'datos-personales', titulo: 'Mis Datos Personales', desc: 'Cambio de clave y datos de cuenta.', icono: 'user' },
       { id: 'carreras-sedes', titulo: 'Carreras, Sedes', desc: 'Configurar sedes y ofertas académicas.', icono: 'git-fork' },
-      { id: 'admin-general', titulo: 'Administración General', desc: 'Acceso exclusivo Full Admin SaaS.', icono: 'shield-alert' }
+      { id: 'super-admin', titulo: 'Administración General', desc: 'Acceso exclusivo Full Admin SaaS.', icono: 'shield-alert' }
     ]
   }
 };
 
+function obtenerDocentes() {
+  return JSON.parse(localStorage.getItem('db_docentes')) || [
+    { id: 1, nombre: 'María', apellido: 'Pérez', dni: '28456123' },
+    { id: 2, nombre: 'Carlos', apellido: 'Gómez', dni: '31987654' },
+    { id: 3, nombre: 'Laura', apellido: 'Fernández', dni: '25111222' }
+  ];
+}
+
+function obtenerOpcionesDocentesHTML(valorSeleccionado = '') {
+  const docentes = obtenerDocentes();
+  let opciones = `<option value="">-- Seleccionar Docente --</option>`;
+  docentes.forEach(d => {
+    const nombreCompleto = `${d.apellido}, ${d.nombre}`;
+    const selected = (valorSeleccionado === nombreCompleto || valorSeleccionado == d.id) ? 'selected' : '';
+    opciones += `<option value="${nombreCompleto}" ${selected}>${nombreCompleto} (DNI: ${d.dni})</option>`;
+  });
+  return opciones;
+}
+
+function obtenerSelectDocentesHTML(idSelect, valorSeleccionado = '', clasesExtra = '') {
+  const opciones = obtenerOpcionesDocentesHTML(valorSeleccionado);
+  return `<select id="${idSelect}" class="w-full bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 rounded-xl p-2.5 text-xs outline-none focus:border-emerald-500 dynamic-text-main ${clasesExtra}">${opciones}</select>`;
+}
+
 async function cargarModulo(nombreModulo, pushToHistory = true) {
+  // ALIAS DE SEGURIDAD: Redirigir la ruta o ID 'admin-general' al modulo real 'super-admin'
+  if (nombreModulo === 'admin-general') {
+    nombreModulo = 'super-admin';
+  }
+
   const contenedor = document.getElementById('contenedor-modulo');
   const titulo = document.getElementById('titulo-modulo');
 
@@ -142,13 +202,13 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
       script.id = `script-${nombreModulo}`;
       script.src = `js/modulos/${nombreModulo}.js`;
       script.onload = () => {
-        const fnName = `init_${nombreModulo.replace('-', '_')}`;
+        const fnName = `init_${nombreModulo.replace(/-/g, '_')}`;
         if (window[fnName]) window[fnName]();
         if (window.lucide) lucide.createIcons();
       };
       document.body.appendChild(script);
     } else {
-      const fnName = `init_${nombreModulo.replace('-', '_')}`;
+      const fnName = `init_${nombreModulo.replace(/-/g, '_')}`;
       if (window[fnName]) window[fnName]();
       if (window.lucide) lucide.createIcons();
     }
@@ -159,6 +219,7 @@ async function cargarModulo(nombreModulo, pushToHistory = true) {
 
   } catch (error) {
     contenedor.innerHTML = `<p class="text-rose-500 font-bold p-4">Error al cargar el módulo ${nombreModulo}</p>`;
+    if (window.lucide) lucide.createIcons();
   }
 }
 
